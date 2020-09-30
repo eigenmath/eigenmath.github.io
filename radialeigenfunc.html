@@ -1,4 +1,7 @@
 <html>
+<head>
+<script src="eigenmath.js"></script>
+</head>
 <body style="font-size:18pt">
 
 <table>
@@ -41,33 +44,13 @@ R(3,2) == A 2 sqrt(30)/1215 rho^2 exp(-rho/3)
 </textarea>
 </td>
 <td>
-<button onclick="run_button()" style="font-size:20pt">Run</button>
+<button onclick="run()" style="font-size:20pt">Run</button>
 </td>
 </tr>
 </table>
 
 <p>
 <div id="stdout"></div>
-
-<script src="eigenmath.js"></script>
-
-<script>
-function
-run_button()
-{
-	var stdout = document.getElementById("stdout");
-	stdout.innerHTML = "";
-
-	var s = document.getElementById("stdin").value;
-
-	run(s);
-}
-function
-fputs(s)
-{
-	stdout.innerHTML = stdout.innerHTML.concat(s);
-}
-</script>
 
 </body>
 </html>

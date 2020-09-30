@@ -4595,6 +4595,11 @@ floatf()
 	evalf();
 }
 function
+fputs(s)
+{
+	stdout.innerHTML += s;
+}
+function
 gcd_integers(a, b)
 {
 	var t;
@@ -9906,8 +9911,13 @@ rewrite(p0) // p0 is arg subst list
 /* exported run */
 
 function
-run(s)
+run()
 {
+	var s = document.getElementById("stdin").value;
+
+	stdout = document.getElementById("stdout");
+	stdout.innerHTML = "";
+
 	try {
 		run_nib(s);
 	}
@@ -11343,6 +11353,7 @@ transpose(n, m)
 
 	push(p2);
 }
+var stdout;
 var stack;
 var frame;
 var binding;

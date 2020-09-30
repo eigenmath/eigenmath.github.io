@@ -1,4 +1,7 @@
 <html>
+<head>
+<script src="eigenmath.js"></script>
+</head>
 <body style="font-size:18pt">
 
 <table>
@@ -35,33 +38,13 @@ dot(psihat(x,y),ket11) == sqrt(1/2) (phi(1,x) phi(2,y) - phi(1,y) phi(2,x)) ket0
 </textarea>
 </td>
 <td>
-<button onclick="run_button()" style="font-size:20pt">Run</button>
+<button onclick="run()" style="font-size:20pt">Run</button>
 </td>
 </tr>
 </table>
 
 <p>
 <div id="stdout"></div>
-
-<script src="eigenmath.js"></script>
-
-<script>
-function
-run_button()
-{
-	var stdout = document.getElementById("stdout");
-	stdout.innerHTML = "";
-
-	var s = document.getElementById("stdin").value;
-
-	run(s);
-}
-function
-fputs(s)
-{
-	stdout.innerHTML = stdout.innerHTML.concat(s);
-}
-</script>
 
 </body>
 </html>

@@ -1,4 +1,7 @@
 <html>
+<head>
+<script src="eigenmath.js"></script>
+</head>
 <body style="font-size:18pt">
 
 <table>
@@ -65,33 +68,13 @@ dot(ket001,rhat,ket001) == r(3,3)
 </textarea>
 </td>
 <td>
-<button onclick="run_button()" style="font-size:20pt">Run</button>
+<button onclick="run()" style="font-size:20pt">Run</button>
 </td>
 </tr>
 </table>
 
 <p>
 <div id="stdout"></div>
-
-<script src="eigenmath.js"></script>
-
-<script>
-function
-run_button()
-{
-	var stdout = document.getElementById("stdout");
-	stdout.innerHTML = "";
-
-	var s = document.getElementById("stdin").value;
-
-	run(s);
-}
-function
-fputs(s)
-{
-	stdout.innerHTML = stdout.innerHTML.concat(s);
-}
-</script>
 
 </body>
 </html>
