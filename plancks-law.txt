@@ -1,0 +1,15 @@
+-- www.eigenmath.org/plancks-law.txt
+
+-- draw a graph of black-body radiation
+
+alpha = 1
+h = 1
+k = 1
+T = 1
+
+rho = alpha nu^3 / (exp(h nu / (k T)) - 1)
+
+xrange = (0,10)
+yrange = (0,5)
+
+draw(rho,nu)
