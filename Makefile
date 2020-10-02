@@ -12,3 +12,8 @@ default:
 
 clean:
 	rm -f *.aux *.log *.out *.synctex.gz *.toc
+
+demos:
+	cat 1.txt angmomop.txt 2.txt > angmomop.html
+	cat 1.txt anticomm.txt 2.txt > anticomm.html
+	cat 1.txt bhabha-scattering-4.txt 2.txt > bhabha-scattering-4.html

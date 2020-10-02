@@ -1,6 +1,4 @@
--- www.eigenmath.org/bhabha-scattering-4.txt
-
--- Compute coefficient of determination for data from SLAC-PUB-1501.
+-- Compute R-squared for Bhabha scattering data from SLAC-PUB-1501
 
 N = 12 -- number of observations
 
@@ -37,23 +35,25 @@ y = (
 402,
 398)
 
+"Observed counts per bin"
+
+y
+
 -- F is unnormalized cumulative distribution function for Bhabha process
 
 F(theta) = -37/8 cos(theta) - 1/4 cos(2 theta) - 1/24 cos(3 theta) - 4 / sin(theta/2)^2 - 16 log(sin(theta/2))
 
-"total counts"
+-- T is total counts
 
 T = sum(k,1,12,y[k])
-T
 
-"normalization constant"
+-- C is normalization constant
 
 C = F(arccos(-0.6)) - F(arccos(0.6))
-C
 
-"predicted counts"
+-- yhat is predicted counts
 
-yhat = zero(N) -- create yhat vector
+yhat = zero(N)
 
 for(k,1,N,
   theta1 = arccos(x[k]),
@@ -61,9 +61,11 @@ for(k,1,N,
   yhat[k] = (F(theta2) - F(theta1)) T / C
 )
 
+"Predicted counts"
+
 yhat
 
-"coefficient of determination (R-squared)"
+"Coefficient of determination (R-squared)"
 
 ybar = 1/N sum(k,1,N,y[k])
 
