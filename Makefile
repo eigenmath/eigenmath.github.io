@@ -29,3 +29,4 @@ demos:
 	cat 1.txt how-planck-calculated-h-and-k.txt 2.txt > how-planck-calculated-h-and-k.html
 	cat 1.txt legendre.txt 2.txt > legendre.html
 	cat 1.txt lincomb.txt 2.txt > lincomb.html
+	cat 1.txt mixedstate.txt 2.txt > mixedstate.html
