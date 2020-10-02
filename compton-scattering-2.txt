@@ -1,6 +1,6 @@
--- www.eigenmath.org/compton-scattering-2.txt
-
 -- Verify momentum formulas for Compton scattering
+
+-- Run time is about 20 seconds
 
 E = sqrt(omega^2 + m^2)
 
