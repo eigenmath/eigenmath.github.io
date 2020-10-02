@@ -30,3 +30,5 @@ demos:
 	cat 1.txt legendre.txt 2.txt > legendre.html
 	cat 1.txt lincomb.txt 2.txt > lincomb.html
 	cat 1.txt mixedstate.txt 2.txt > mixedstate.html
+	cat 1.txt positionop1.txt 2.txt > positionop1.html
+	cat 1.txt positionop2.txt 2.txt > positionop2.html
