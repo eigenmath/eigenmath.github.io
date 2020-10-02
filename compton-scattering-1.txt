@@ -1,6 +1,6 @@
--- www.eigenmath.org/compton-scattering-1.txt
+-- Verify Casimir trick for Compton scattering
 
--- Verify the Casimir trick for Compton scattering
+-- Run time is about 25 seconds
 
 E = sqrt(omega^2 + m^2)
 
