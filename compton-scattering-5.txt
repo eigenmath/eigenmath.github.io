@@ -1,6 +1,4 @@
--- www.eigenmath.org/compton-scattering-5.txt
-
--- "Compton Scattering of Quasi-Real Virtual Photons at LEP"
+-- Compton Scattering of Quasi-Real Virtual Photons at LEP
 
 -- arxiv.org/abs/hep-ex/0504012
 
@@ -40,24 +38,30 @@ y = (
 3310,
 3330)
 
+y = y "picobarn"
+
+"Observed cross section per bin"
+
+y
+
 pie = float(pi)
 alpha = 0.0072973525693
-hbar = 6.582119569 10^(-25) -- GeV seconds
-c = 299792458 -- meters per second
-s = 40 -- GeV squared
-
-"predicted cross section for center of mass frame"
+hbar = 6.582119569 10^(-25) GeV second
+c = 299792458 meter / second
+s = 40 GeV^2
 
 yhat = zero(N)
 
 for(k,1,N,
   M = (1 + x[k])/2 + 2/(1 + x[k]),
-  yhat[k] = pie/s alpha^2 M (hbar c)^2 10^40
+  yhat[k] = pie/s alpha^2 M (hbar c)^2 10^40 "picobarn" / meter^2
 )
+
+"Predicted cross section"
 
 yhat
 
-"coefficient of determination (R-squared)"
+"Coefficient of determination (R-squared)"
 
 ybar = 1/N sum(k,1,N,y[k])
 SSE = sum(k,1,N,(y[k] - yhat[k])^2)

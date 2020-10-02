@@ -1,6 +1,4 @@
--- www.eigenmath.org/compton-scattering-3.txt
-
--- Verify lab frame formulas for Compton scattering.
+-- Verify lab frame formulas for Compton scattering
 
 gmunu = ((1,0,0,0),(0,-1,0,0),(0,0,-1,0),(0,0,0,-1))
 

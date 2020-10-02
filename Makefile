@@ -21,3 +21,5 @@ demos:
 	cat 1.txt bohrradius.txt 2.txt > bohrradius.html
 	cat 1.txt compton-scattering-1.txt 2.txt > compton-scattering-1.html
 	cat 1.txt compton-scattering-2.txt 2.txt > compton-scattering-2.html
+	cat 1.txt compton-scattering-3.txt 2.txt > compton-scattering-3.html
+	cat 1.txt compton-scattering-5.txt 2.txt > compton-scattering-5.html
