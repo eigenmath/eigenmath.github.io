@@ -23,3 +23,6 @@ demos:
 	cat 1.txt compton-scattering-2.txt 2.txt > compton-scattering-2.html
 	cat 1.txt compton-scattering-3.txt 2.txt > compton-scattering-3.html
 	cat 1.txt compton-scattering-5.txt 2.txt > compton-scattering-5.html
+	cat 1.txt energymatrix.txt 2.txt > energymatrix.html
+	cat 1.txt exchange-energy.txt 2.txt > exchange-energy.html
+	cat 1.txt hatom.txt 2.txt > hatom.html
