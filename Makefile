@@ -1,4 +1,4 @@
-.PHONY: default clean
+.PHONY: default clean demos
 
 %.pdf: %.tex
 	pdflatex $<
