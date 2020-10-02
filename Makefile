@@ -32,3 +32,5 @@ demos:
 	cat 1.txt mixedstate.txt 2.txt > mixedstate.html
 	cat 1.txt positionop1.txt 2.txt > positionop1.html
 	cat 1.txt positionop2.txt 2.txt > positionop2.html
+	cat 1.txt radialeigenfunc.txt 2.txt > radialeigenfunc.html
+	cat 1.txt radialfuncnorm.txt 2.txt > radialfuncnorm.html
