@@ -1227,12 +1227,7 @@ cmp_rationals(p1, p2)
 function
 cmp_strings(s1, s2)
 {
-	if (s1 == s2)
-		return 0;
-	else if (s1 < s2)
-		return -1;
-	else
-		return 1;
+	return s1.localeCompare(s2);
 }
 function
 cmp_terms(p1, p2)
