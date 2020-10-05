@@ -29,11 +29,11 @@ demos:
 	cat 1.txt how-planck-calculated-h-and-k.txt 2.txt > how-planck-calculated-h-and-k.html
 	cat 1.txt legendre.txt 2.txt > legendre.html
 	cat 1.txt lincomb.txt 2.txt > lincomb.html
-	cat 1.txt mixedstate.txt 2.txt > mixedstate.html
 	cat 1.txt positionop1.txt 2.txt > positionop1.html
 	cat 1.txt positionop2.txt 2.txt > positionop2.html
 	cat 1.txt radialeigenfunc.txt 2.txt > radialeigenfunc.html
 	cat 1.txt radialfuncnorm.txt 2.txt > radialfuncnorm.html
 	cat 1.txt spharm.txt 2.txt > spharm.html
+	cat 1.txt super.txt 2.txt > super.html
 	cat 1.txt wavefuncop1.txt 2.txt > wavefuncop1.html
 	cat 1.txt wavefuncop2.txt 2.txt > wavefuncop2.html
