@@ -48,7 +48,7 @@ Kinetic energy matrix $\hat{K}$ can be computed from energy eigenvalues of the b
 0 & 0 & 0 & E_1+E_2
 \end{pmatrix},
 \qquad
-E_n=\frac{n^2\pi^2\hbar^2}{2m_eL^2}
+E_n=\frac{n^2\pi^2\hbar^2}{2mL^2}
 \end{equation*}
 
 \noindent
@@ -59,7 +59,7 @@ Potential energy matrix $\hat{V}$ has one entry due to Coulomb interaction in th
 0 & 0 & 0 & 0\\
 0 & 0 & 0 & 0\\
 0 & 0 & 0 & 0\\
-0 & 0 & 0 & V_{12}
+0 & 0 & 0 & V
 \end{pmatrix}
 \end{equation*}
 
@@ -72,7 +72,7 @@ Let $\psi(x,y)$ be the antisymmetrized wavefunction of the two electrons.
 \noindent
 Then
 \begin{equation*}
-V_{12}=\frac{e^2}{4\pi\epsilon_0}\int_0^L\int_0^L
+V=\frac{e^2}{4\pi\epsilon_0}\int_0^L\int_0^L
 \psi^*(x,y)\left(\frac{1}{|x-y|}\right)\psi(x,y)\,dx\,dy
 \end{equation*}
 
@@ -89,7 +89,7 @@ For $\hat{K}$ we have
 \end{equation*}
 
 \noindent
-Computing $V_{12}$ by numerical integration we have
+Computing $V$ by numerical integration we have
 \begin{equation*}
 \hat{V}=\begin{pmatrix}
 0 & 0 & 0 & 0\\

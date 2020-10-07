@@ -38,7 +38,7 @@ eV = 1/e coulomb "eV" / joule -- conversion constant
 
 pi = float(pi) -- use numerical value of pi
 
--- width of box
+"Length"
 
 L = 1.0 10^(-9) meter
 L
@@ -62,9 +62,9 @@ D = abs((x - y) / meter) meter -- trick to handle abs of meter
 
 f = conj(psi) psi / D
 
-V12 = C S(f) eV
+V = C S(f) eV
 
-Vhat = V12 outer(ket3,ket3)
+Vhat = V outer(ket3,ket3)
 Vhat
 
 "Energy matrix"
