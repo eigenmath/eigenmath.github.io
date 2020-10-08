@@ -9906,13 +9906,12 @@ rewrite(p0) // p0 is arg subst list
 function
 run()
 {
-	var s = document.getElementById("stdin").value;
-
+	inbuf = document.getElementById("stdin").value;
 	stdout = document.getElementById("stdout");
 	stdout.innerHTML = "";
 
 	try {
-		run_nib(s);
+		run_nib();
 	}
 
 	catch(err) {
@@ -9924,11 +9923,9 @@ run()
 	}
 }
 function
-run_nib(s)
+run_nib()
 {
 	var k = 0;
-
-	inbuf = s;
 
 	init();
 	initscript();
