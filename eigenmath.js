@@ -9932,7 +9932,7 @@ run_nib()
 
 	for (;;) {
 
-		k = scan_input(k);
+		k = scan_inbuf(k);
 
 		if (k == 0)
 			break; // end of input
@@ -10467,7 +10467,7 @@ scan_error(s)
 	stopf("");
 }
 function
-scan_input(k)
+scan_inbuf(k)
 {
 	trace1 = k;
 	k = scan(inbuf, k);
