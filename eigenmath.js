@@ -8631,8 +8631,6 @@ const RED = 3;
 function
 print_buf(s, color)
 {
-	var t;
-
 	s = s.replace(/&/g, "&amp;");
 	s = s.replace(/</g, "&lt;");
 	s = s.replace(/>/g, "&gt;");
@@ -8641,19 +8639,19 @@ print_buf(s, color)
 	switch (color) {
 
 	case BLACK:
-		t = "<p><span style='color:black'>";
+		s = "<p><span style='color:black'>" + s + "</span></p>";
 		break;
 
 	case BLUE:
-		t = "<p><span style='color:blue;font-family:courier'>";
+		s = "<p><span style='color:blue;font-family:courier'>" + s + "</span></p>";
 		break;
 
 	case RED:
-		t = "<p><span style='color:red;font-family:courier'>";
+		s = "<p><span style='color:red;font-family:courier'>" + s + "</span></p>";
 		break;
 	}
 
-	stdout.innerHTML += t + s + "</span></p>";
+	stdout.innerHTML += s;
 }
 const MML_MINUS = "<mo>-</mo>"
 const MML_MINUS_1 = "<mo>(</mo><mo>-</mo><mn>1</mn><mo>)</mo>"
