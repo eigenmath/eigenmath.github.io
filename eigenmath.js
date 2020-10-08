@@ -4590,11 +4590,6 @@ floatf()
 	evalf();
 }
 function
-fputs(s)
-{
-	stdout.innerHTML += s;
-}
-function
 gcd_integers(a, b)
 {
 	var t;
@@ -8658,7 +8653,7 @@ print_buf(s, color)
 		break;
 	}
 
-	fputs(t + s + "</span></p>");
+	stdout.innerHTML += t + s + "</span></p>";
 }
 const MML_MINUS = "<mo>-</mo>"
 const MML_MINUS_1 = "<mo>(</mo><mo>-</mo><mn>1</mn><mo>)</mo>"
@@ -8670,12 +8665,9 @@ const MML_RB = "<mo>]</mo></mrow>"
 function
 print_math()
 {
-	var p1 = pop();
 	outbuf = "";
-	printf("<p><math>");
-	print_expr(p1);
-	printf("</math></p>");
-	fputs(outbuf);
+	print_expr(pop());
+	stdout.innerHTML += "<p><math>" + outbuf + "</math></p>";
 }
 
 function
