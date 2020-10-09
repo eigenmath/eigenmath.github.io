@@ -92,4 +92,4 @@ f
 
 "Checking Casimir trick (1=ok)"
 
-S == N f
+S/N == f
