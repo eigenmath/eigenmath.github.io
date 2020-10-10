@@ -16,6 +16,8 @@ clean:
 demos:
 	cat 1.txt angmomop.txt 2.txt > angmomop.html
 	cat 1.txt anticomm.txt 2.txt > anticomm.html
+	cat 1.txt bhabha-scattering-1.txt 2.txt > bhabha-scattering-1.html
+	cat 1.txt bhabha-scattering-2.txt 2.txt > bhabha-scattering-2.html
 	cat 1.txt bhabha-scattering-4.txt 2.txt > bhabha-scattering-4.html
 	cat 1.txt bhabha-scattering-5.txt 2.txt > bhabha-scattering-5.html
 	cat 1.txt bohrradius.txt 2.txt > bohrradius.html
