@@ -6,14 +6,14 @@ M = (1 + cos(theta/2)^4)/sin(theta/2)^4 -
     2 cos(theta/2)^4/sin(theta/2)^2 +
     (1 + cos(theta)^2)/2
 
-f(theta) = M sin(theta)
+f = M sin(theta)
 
 pie = float(pi)
 alpha = pie/180
 dtheta = (pie - 2 alpha)/100
-C = sum(k,1,100,f(alpha + (k - 0.5) dtheta)) dtheta
+C = sum(k,1,100,eval(f,theta,alpha + (k - 0.5) dtheta)) dtheta
 
-f(theta) = M sin(theta)/C
+f = M sin(theta)/C
 
 xrange = (0,pi)
 yrange = (0,0.001)
@@ -22,7 +22,7 @@ draw(f,theta)
 N = 4
 P = zero(N)
 
-I(a,b) = sum(k,1,100,f(a + (k - 0.5) (b - a)/100)) (b - a)/100
+I(a,b) = sum(k,1,100,eval(f,theta,a + (k - 0.5) (b - a)/100)) (b - a)/100
 
 for(k,1,N - 1,
   a = k pie/N,
