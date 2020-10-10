@@ -34,5 +34,4 @@ for(k,1,N - 1,
 )
 
 P = P/sum(k,1,N,P[k])
-
 P
