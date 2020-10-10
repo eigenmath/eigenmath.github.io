@@ -1,4 +1,4 @@
--- Draw a probability density for Bhabha scattering
+-- Draw angular distribution for Bhabha scattering
 
 -- www.eigenmath.org/bhabha-scattering-3.txt
 
