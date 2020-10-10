@@ -9,8 +9,8 @@ M = (1 + cos(theta/2)^4)/sin(theta/2)^4 -
 f = M sin(theta)
 
 pie = float(pi)
-alpha = pie/180
-dtheta = (pie - alpha)/100
+alpha = pie / 4
+dtheta = (pie - alpha) / 100
 
 -- integrate f from alpha to pi to obtain normalization constant C
 
@@ -18,22 +18,25 @@ C = sum(k,1,100,eval(f,theta,alpha + (k - 0.5) dtheta)) dtheta
 
 f = M sin(theta) / C
 
-xrange = (0,pi)
-yrange = (0,0.001)
+xrange = (alpha,pi)
+yrange = (0,1)
 draw(f,theta)
 
 -- integrate f from a to b
 
 I(a,b) = sum(k,1,100,eval(f,theta,a + (k - 0.5) (b - a)/100)) (b - a)/100
 
-N = 4 -- number of bins
+N = 3 -- number of bins
 P = zero(N)
 
-for(k,1,N - 1,
-  a = k pie/N,
-  b = (k + 1) pie/N,
-  P[k + 1] = I(a,b)
+for(k,1,N,
+  a = k pie / (N + 1),
+  b = (k + 1) pie / (N + 1),
+  P[k] = I(a,b)
 )
 
 P = P / sum(k,1,N,P[k]) -- normalize P
+
+"Probability distribution"
+
 P
