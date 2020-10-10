@@ -19,7 +19,7 @@ C = sum(k,1,100,eval(f,theta,alpha + (k - 0.5) dtheta)) dtheta
 f = M sin(theta) / C
 
 xrange = (alpha,pi)
-yrange = (0,1)
+yrange = (0,4)
 draw(f,theta)
 
 -- integrate f from a to b
@@ -30,12 +30,10 @@ N = 3 -- number of bins
 P = zero(N)
 
 for(k,1,N,
-  a = k pie / (N + 1),
-  b = (k + 1) pie / (N + 1),
+  a = alpha + (k - 1) (pie - alpha) / N,
+  b = alpha + k (pie - alpha) / N,
   P[k] = I(a,b)
 )
-
-P = P / sum(k,1,N,P[k]) -- normalize P
 
 "Probability distribution"
 
