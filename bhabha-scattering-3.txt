@@ -12,20 +12,22 @@ pie = float(pi)
 alpha = pie/180
 dtheta = (pie - alpha)/100
 
--- integrate from alpha to pi to obtain normalization constant C
+-- integrate f from alpha to pi to obtain normalization constant C
 
 C = sum(k,1,100,eval(f,theta,alpha + (k - 0.5) dtheta)) dtheta
 
-f = M sin(theta)/C
+f = M sin(theta) / C
 
 xrange = (0,pi)
 yrange = (0,0.001)
 draw(f,theta)
 
-N = 4
-P = zero(N)
+-- integrate f from a to b
 
 I(a,b) = sum(k,1,100,eval(f,theta,a + (k - 0.5) (b - a)/100)) (b - a)/100
+
+N = 4
+P = zero(N)
 
 for(k,1,N - 1,
   a = k pie/N,
@@ -33,5 +35,5 @@ for(k,1,N - 1,
   P[k + 1] = I(a,b)
 )
 
-P = P/sum(k,1,N,P[k])
+P = P / sum(k,1,N,P[k]) -- normalize P
 P
