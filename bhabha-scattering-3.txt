@@ -10,7 +10,10 @@ f = M sin(theta)
 
 pie = float(pi)
 alpha = pie/180
-dtheta = (pie - 2 alpha)/100
+dtheta = (pie - alpha)/100
+
+-- integrate from alpha to pi to obtain normalization constant C
+
 C = sum(k,1,100,eval(f,theta,alpha + (k - 0.5) dtheta)) dtheta
 
 f = M sin(theta)/C
