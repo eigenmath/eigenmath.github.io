@@ -7,7 +7,7 @@
 </table>
 
 <p>
-<div id="stdout"></div>
+<div id="stdout" style="font-size:18pt"></div>
 
 </body>
 </html>
