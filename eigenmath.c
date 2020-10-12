@@ -1,4 +1,4 @@
-/* September 26, 2020
+/* October 12, 2020
 
 To build and run:
 
@@ -10,8 +10,6 @@ Press control-C or type exit to exit.
 To run a script:
 
 	./eigenmath scriptfilename
-
-Sample scripts are available at www.eigenmath.org
 
 To generate LaTeX output:
 
@@ -25,7 +23,7 @@ To generate MathJax output:
 
         ./eigenmath --mathjax scriptfilename | tee foo.html
 
-MathML and MathJax results look best on Firefox.
+The Eigenmath manual and sample scripts are available at https://eigenmath.github.io
 
 
 BSD 2-Clause License
@@ -5673,7 +5671,7 @@ derf(void)
 	multiply();
 	exponential();
 	push_symbol(PI);
-	push_rational(-1,2);
+	push_rational(-1, 2);
 	power();
 	multiply();
 	push_integer(2);
