@@ -1,4 +1,4 @@
-/* October 11, 2020
+/* October 12, 2020
 
 Template web page for using eigenmath.js
 
@@ -4969,10 +4969,10 @@ integral_search(F, h, table)
 			break;
 	}
 
-	stack.splice(h); // pop all
-
 	if (i == n)
 		return 0;
+
+	stack.splice(h); // pop all
 
 	scan1(table[i + 1]); // answer
 	evalf();
