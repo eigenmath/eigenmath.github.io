@@ -166,7 +166,7 @@ We can integrate $d\sigma$ to obtain a cumulative distribution function.
 \noindent
 Let
 \begin{equation*}
-I(\theta)=2\pi\int_\alpha^\xi\frac{d\sigma}{d\Omega}\,\sin\theta\,d\theta,
+I(\theta)=\int_\alpha^\xi\frac{d\sigma}{d\Omega}\,\sin\theta\,d\theta,
 \quad\alpha\le\xi\le\pi
 \end{equation*}
 
@@ -191,19 +191,19 @@ P(\theta_1\le\theta\le\theta_2)=F(\theta_2)-F(\theta_1)
 \noindent
 The probability density is
 \begin{equation*}
-f(\theta)=\frac{dF(\theta)}{d\theta}=\frac{\sin\theta}{I(\pi)(\cos\theta-1)^2},
+f(\theta)=\frac{dF(\theta)}{d\theta}=\frac{1}{I(\pi)}\frac{d\sigma}{d\Omega}\sin\theta,
 \qquad\alpha\le\theta\le\pi
 \end{equation*}
 
 \noindent
-Run ``rutherford-scattering-3.txt'' to draw a graph of $f(\theta)$.
+Run ``rutherford-scattering-3.txt'' to draw a graph of $f(\theta)$ for $\alpha=\tfrac{1}{4}\pi=45^\circ$.
 
 \begin{center}
 \includegraphics[scale=0.5]{rutherford-scattering-ss1.png}
 \end{center}
 
 \noindent
-Here is a probability distribution for $45^\circ$ bins with $\alpha=45^\circ$.
+The following table shows the corresponding probability distribution for three bins.
 
 \begin{center}
 \begin{tabular}{|c|c|c|}
