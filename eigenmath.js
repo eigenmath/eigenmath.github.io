@@ -1650,6 +1650,7 @@ const DERIVATIVE = "derivative";
 const DET = "det";
 const DO = "do";
 const DOT = "dot";
+const ERF = "erf";
 const EVAL = "eval";
 const EXP = "exp";
 const EXPCOS = "expcos";
@@ -2343,6 +2344,26 @@ denominator()
 	push(p2);
 }
 function
+derf(F, X)
+{
+	push(cadr(F));
+	push_integer(2);
+	power();
+	push_integer(-1);
+	multiply();
+	exp();
+	push_symbol(PI);
+	push_rational(-1, 2);
+	power();
+	multiply();
+	push_integer(2);
+	multiply();
+	push(cadr(F));
+	push(X);
+	derivative();
+	multiply();
+}
+function
 derivative()
 {
 	var F, X;
@@ -2696,6 +2717,11 @@ dss(F, X)
 		return;
 	}
 
+	if (car(F) == symbol(ERF)) {
+		derf(F, X);
+		return;
+	}
+
 	if (car(F) == symbol(INTEGRAL) && caddr(F) == X) {
 		push(cadr(F));
 		return;
@@ -2857,6 +2883,24 @@ equalq(p, a, b)
 		return p.d == a / b;
 	else
 		return 0;
+}
+function
+erf()
+{
+	var p1 = pop();
+
+	if (isnegativeterm(p1)) {
+		push_symbol(ERF);
+		push(p1);
+		negate();
+		list(2);
+		negate();
+		return;
+	}
+
+	push_symbol(ERF);
+	push(p1);
+	list(2);
 }
 function
 eval_abs(p1)
@@ -3207,6 +3251,13 @@ function
 eval_dot(p1)
 {
 	eval_inner(p1);
+}
+function
+eval_erf(p1)
+{
+	push(cadr(p1));
+	evalf();
+	erf();
 }
 function
 eval_eval(p1)
@@ -11402,6 +11453,7 @@ derivative:	{printname:DERIVATIVE,	func:eval_derivative},
 det:		{printname:DET,		func:eval_det},
 "do":		{printname:DO,		func:eval_do},
 dot:		{printname:DOT,		func:eval_dot},
+erf:		{printname:ERF,		func:eval_erf},
 "eval":		{printname:EVAL,	func:eval_eval},
 exp:		{printname:EXP,		func:eval_exp},
 expcos:		{printname:EXPCOS,	func:eval_expcos},
