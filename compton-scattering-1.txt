@@ -1,4 +1,4 @@
--- Verify Casimir trick for Compton scattering (25 seconds)
+-- Verify Casimir trick for Compton scattering (25-70 seconds)
 
 E = sqrt(omega^2 + m^2)
 
