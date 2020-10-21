@@ -1,6 +1,4 @@
-/* October 14, 2020
-
-Template web page for using eigenmath.js
+/* Template web page for using eigenmath.js
 
 <html>
 <body>
@@ -22,7 +20,7 @@ float(b)
 </tr>
 </table>
 <p>
-<div id="stdout" style="font-size:18pt"></div>
+<div id="stdout"></div>
 </body>
 </html>
 
@@ -2829,6 +2827,1401 @@ dtt(p1, p2)
 	p3.dim = p1.dim.concat(p2.dim);
 
 	push(p3);
+}
+function
+emit_args(u, p, small_font)
+{
+	var v = {type:PAREN, a:[], small_font:small_font};
+
+	p = cdr(p);
+
+	if (iscons(p)) {
+		emit_expr(v, car(p), small_font);
+		p = cdr(p);
+		while (iscons(p)) {
+			emit_roman_text(v, ",", small_font);
+			emit_expr(v, car(p), small_font);
+			p = cdr(p);
+		}
+	}
+
+	emit_update(v);
+
+	if (small_font)
+		v.width += 2 * SMALL_DELIM_WIDTH;
+	else
+		v.width += 2 * DELIM_WIDTH;
+
+	u.a.push(v);
+}
+function
+emit_base(u, p, small_font)
+{
+	if (isnegativenumber(p) || isfraction(p) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER))
+		emit_subexpr(u, p, small_font);
+	else
+		emit_expr(u, p, small_font);
+}
+const SPACE = 0;
+const TEXT = 1;
+const LINE = 2;
+const PAREN = 3;
+const SUPERSCRIPT = 4;
+const SUBSCRIPT = 5;
+const FRACTION = 6;
+const TABLE = 7;
+
+const FONT_SIZE = 20
+const SMALL_FONT_SIZE = 14;
+
+const HEIGHT_RATIO = 1.0;
+const DEPTH_RATIO = 0.3;
+const WIDTH_RATIO = 0.7;
+
+const X_HEIGHT_RATIO = 0.3;
+const V_SPACE_RATIO = 0.2;
+
+const THIN_SPACE_RATIO = 1/3 * WIDTH_RATIO;
+const MEDIUM_SPACE_RATIO = 2/3 * WIDTH_RATIO;
+
+const FONT_HEIGHT = HEIGHT_RATIO * FONT_SIZE;
+const SMALL_FONT_HEIGHT = HEIGHT_RATIO * SMALL_FONT_SIZE;
+
+const FONT_DEPTH = DEPTH_RATIO * FONT_SIZE;
+const SMALL_FONT_DEPTH = DEPTH_RATIO * SMALL_FONT_SIZE;
+
+const X_HEIGHT = X_HEIGHT_RATIO * FONT_SIZE;
+const SMALL_X_HEIGHT = X_HEIGHT_RATIO * SMALL_FONT_SIZE;
+
+const VSPACE = V_SPACE_RATIO * FONT_SIZE;
+const SMALL_VSPACE = V_SPACE_RATIO * SMALL_FONT_SIZE;
+
+const MEDIUM_SPACE = MEDIUM_SPACE_RATIO * FONT_SIZE;
+const SMALL_MEDIUM_SPACE = MEDIUM_SPACE_RATIO * SMALL_FONT_SIZE;
+
+const DWR = 0.7; // delimiter width ratio
+
+const DELIM_WIDTH = DWR * WIDTH_RATIO * FONT_SIZE;
+const SMALL_DELIM_WIDTH = DWR * WIDTH_RATIO * SMALL_FONT_SIZE;
+
+const TABLE_HSPACE = 0.6 * FONT_SIZE;
+const TABLE_VSPACE = 0.2 * FONT_SIZE;
+
+const emit_wtab = [
+	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,
+
+	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,
+
+	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,
+
+	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,
+
+//	space	!	"	#	$	%	&	'
+	0.7,	0.6,	0.6,	1.0,	1.0,	1.0,	1.0,	0.6,
+
+//	(	)	*	+	,	-	.	/
+	DWR,	DWR,	0.8,	1.1,	0.6,	0.6,	0.6,	1.0,
+
+//	0	1	2	3	4	5	6	7
+	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,	1.0,
+
+//	8	9	:	;	<	=	>	?
+	1.0,	1.0,	0.6,	0.6,	1.0,	1.0,	1.0,	0.8,
+
+//	@	A	B	C	D	E	F	G
+	1.0,	1.5,	1.3,	1.4,	1.5,	1.3,	1.3,	1.5,
+
+//	H	I	J	K	L	M	N	O
+	1.5,	0.8,	0.9,	1.4,	1.3,	1.8,	1.3,	1.3,
+
+//	P	Q	R	S	T	U	V	W
+	1.3,	1.3,	1.3,	1.3,	1.3,	1.3,	1.3,	1.7,
+
+//	X	Y	Z	[	\	]	^	_
+	1.3,	1.3,	1.3,	DWR,	1.0,	DWR,	1.0,	1.0,
+
+//	`	a	b	c	d	e	f	g
+	1.0,	0.9,	0.9,	0.8,	1.0,	0.8,	0.8,	1.0,
+
+//	h	i	j	k	l	m	n	o
+	1.0,	0.5,	0.5,	1.0,	0.5,	1.4,	1.0,	1.0,
+
+//	p	q	r	s	t	u	v	w
+	1.0,	1.0,	0.7,	0.8,	0.6,	1.0,	1.0,	1.4,
+
+//	x	y	z	{	|	}	~
+	0.9,	0.9,	0.9,	1.0,	1.0,	1.0,	1.0,	1.0,
+];
+
+const emit_stab = [
+	"Alpha","Beta","Gamma","Delta","Epsilon","Zeta","Eta","Theta","Iota",
+	"Kappa","Lambda","Mu","Nu","Xi","Pi","Rho","Sigma","Tau","Upsilon",
+	"Phi","Chi","Psi","Omega",
+	"alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota",
+	"kappa","lambda","mu","nu","xi","pi","rho","sigma","tau","upsilon",
+	"phi","chi","psi","omega",
+	"hbar",
+];
+
+const emit_gtab = {
+
+"Alpha"		: 1.5,
+"Beta"		: 1.5,
+"Gamma"		: 1.5,
+"Delta"		: 1.5,
+"Epsilon"	: 1.5,
+"Zeta"		: 1.5,
+"Eta"		: 1.5,
+"Theta"		: 1.5,
+"Iota"		: 1.5,
+"Kappa"		: 1.5,
+"Lambda"	: 1.5,
+"Mu"		: 1.5,
+"Nu"		: 1.5,
+"Xi"		: 1.5,
+"Pi"		: 1.5,
+"Rho"		: 1.5,
+"Sigma"		: 1.5,
+"Tau"		: 1.5,
+"Upsilon"	: 1.5,
+"Phi"		: 1.5,
+"Chi"		: 1.5,
+"Psi"		: 1.5,
+"Omega"		: 1.5,
+"alpha"		: 1.1,
+
+"beta"		: 1.0,
+"gamma"		: 1.0,
+"delta"		: 1.0,
+"epsilon"	: 1.0,
+"zeta"		: 1.0,
+"eta"		: 1.0,
+"theta"		: 1.0,
+"iota"		: 1.0,
+"kappa"		: 1.0,
+"lambda"	: 1.0,
+"mu"		: 1.0,
+"nu"		: 1.0,
+"xi"		: 1.0,
+"pi"		: 1.0,
+"rho"		: 1.0,
+"sigma"		: 1.0,
+"tau"		: 1.0,
+"upsilon"	: 1.0,
+"phi"		: 1.0,
+"chi"		: 1.0,
+"psi"		: 1.0,
+"omega"		: 1.0,
+
+"plus"		: 1.4,
+"minus"		: 1.4,
+"times"		: 1.4,
+"equals"	: 1.4,
+"ge"		: 1.4,
+"gt"		: 1.4,
+"le"		: 1.4,
+"lt"		: 1.4,
+
+"hbar"		: 1.0,
+};
+function
+emit_denominators(p, n, small_font) // n is number of denominators
+{
+	var q, u;
+
+	u = {type:LINE, a:[]};
+
+	p = cdr(p);
+	q = car(p);
+
+	if (isrational(q)) {
+		if (q.b != 1) {
+			emit_roman_text(u, q.b.toFixed(0), small_font);
+			n++;
+		}
+		p = cdr(p);
+	}
+
+	while (iscons(p)) {
+
+		q = car(p);
+
+		if (car(q) != symbol(POWER) || !isnegativenumber(caddr(q))) {
+			p = cdr(p);
+			continue; // not a denominator
+		}
+
+		if (u.a.length > 0)
+			emit_medium_space(u, small_font);
+
+		if (isminusone(caddr(q))) {
+			q = cadr(q);
+			if (car(q) == symbol(ADD) && n > 1)
+				emit_subexpr(u, q, small_font);
+			else
+				emit_expr(u, q, small_font);
+		} else {
+			emit_base(u, cadr(q), small_font);
+			emit_numeric_exponent(u, caddr(q), small_font); // sign is not emitted
+		}
+
+		p = cdr(p);
+	}
+
+	if (u.a.length == 1)
+		return u.a[0];
+
+	emit_update(u);
+
+	return u;
+}
+function
+emit_double(u, p, small_font) // p is a double
+{
+	var i, j, k, s, v;
+
+	if (p.d == 0) {
+		emit_roman_text(u, "0", small_font);
+		return;
+	}
+
+	s = Math.abs(p.d).toPrecision(6) + '\0'; // terminator
+
+	k = 0;
+
+	while (isdigit(s[k]) || s[k] == '.')
+		k++;
+
+	// handle trailing zeroes
+
+	i = s.indexOf(".");
+
+	if (i == -1)
+		emit_roman_text(u, s.substring(0, k), small_font);
+	else {
+		for (j = k - 1; j > i + 1; j--) {
+			if (s[j] != '0')
+				break;
+		}
+		emit_roman_text(u, s.substring(0, j + 1), small_font);
+	}
+
+	if (s[k] != 'E' && s[k] != 'e')
+		return;
+
+	k++;
+
+	emit_roman_symbol(u, "times", small_font);
+
+	emit_roman_text(u, "10", small_font);
+
+	v = {type:SUPERSCRIPT, a:[], small_font:small_font};
+
+	if (s[k] == '+')
+		k++;
+	else if (s[k] == '-') {
+		k++;
+		emit_roman_symbol(v, "minus", 1);
+	}
+
+	while (s[k] == '0')
+		k++; // skip leading zeroes
+
+	emit_roman_text(v, s.substring(k, s.length - 1), 1);
+
+	emit_update_superscript(v, u.a[u.a.length - 1].height);
+
+	u.a.push(v);
+}
+function
+emit_exponent(u, p, small_font)
+{
+	var v;
+
+	if (isnum(p) && !isnegativenumber(p)) {
+		emit_numeric_exponent(u, p, small_font); // sign is not emitted
+		return;
+	}
+
+	v = {type:SUPERSCRIPT, a:[], small_font:small_font};
+
+	emit_expr(v, p, 1);
+
+	emit_update_superscript(v, u.a[u.a.length - 1].height);
+
+	u.a.push(v);
+}
+function
+emit_expr(u, p, small_font)
+{
+	if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p))))
+		emit_roman_symbol(u, "minus", small_font);
+	if (car(p) == symbol(ADD))
+		emit_expr_nib(u, p, small_font);
+	else
+		emit_term(u, p, small_font);
+}
+function
+emit_expr_nib(u, p, small_font)
+{
+	p = cdr(p);
+	emit_term(u, car(p), small_font);
+	p = cdr(p);
+	while (iscons(p)) {
+		if (isnegativeterm(car(p)))
+			emit_infix_operator(u, "minus", small_font);
+		else
+			emit_infix_operator(u, "plus", small_font);
+		emit_term(u, car(p), small_font);
+		p = cdr(p);
+	}
+}
+function
+emit_factor(u, p, small_font)
+{
+	if (isrational(p)) {
+		emit_rational(u, p, small_font);
+		return;
+	}
+
+	if (isdouble(p)) {
+		emit_double(u, p, small_font);
+		return;
+	}
+
+	if (issymbol(p)) {
+		emit_symbol(u, p, small_font);
+		return;
+	}
+
+	if (isstring(p)) {
+		emit_string(u, p, small_font);
+		return;
+	}
+
+	if (istensor(p)) {
+		emit_tensor(u, p);
+		return;
+	}
+
+	if (iscons(p)) {
+		if (car(p) == symbol(POWER))
+			emit_power(u, p, small_font);
+		else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY))
+			emit_subexpr(u, p, small_font);
+		else
+			emit_function(u, p, small_font);
+		return;
+	}
+}
+function
+emit_fraction(u, p, n, small_font) // n is number of denominators
+{
+	var v = {type:FRACTION, small_font:small_font};
+
+	v.num = emit_numerators(p, small_font);
+	v.den = emit_denominators(p, n, small_font);
+
+	emit_update_fraction(v);
+
+	u.a.push(v);
+}
+function
+emit_function(u, p, small_font)
+{
+	// d(f(x),x)
+
+	if (car(p) == symbol(DERIVATIVE)) {
+		emit_roman_text(u, "d", small_font);
+		emit_args(u, p, small_font);
+		return;
+	}
+
+	// n!
+
+	if (car(p) == symbol(FACTORIAL)) {
+		p = cadr(p);
+		if (isposint(p) || issymbol(p))
+			emit_expr(u, p, small_font);
+		else
+			emit_subexpr(u, p, small_font);
+		emit_roman_text(u, "!", small_font);
+		return;
+	}
+
+	// A[1,2]
+
+	if (car(p) == symbol(INDEX)) {
+		p = cdr(p);
+		if (issymbol(car(p)))
+			emit_symbol(u, car(p), small_font);
+		else
+			emit_subexpr(u, car(p), small_font);
+		emit_indices(u, p, small_font);
+		return;
+	}
+
+	if (car(p) == symbol(SETQ) || car(p) == symbol(TESTEQ)) {
+		emit_expr(u, cadr(p), small_font);
+		emit_infix_operator(u, "equals", small_font);
+		emit_expr(u, caddr(p), small_font);
+		return;
+	}
+
+	if (car(p) == symbol(TESTGE)) {
+		emit_expr(u, cadr(p), small_font);
+		emit_infix_operator(u, "ge", small_font);
+		emit_expr(u, caddr(p), small_font);
+		return;
+	}
+
+	if (car(p) == symbol(TESTGT)) {
+		emit_expr(u, cadr(p), small_font);
+		emit_infix_operator(u, "gt", small_font);
+		emit_expr(u, caddr(p), small_font);
+		return;
+	}
+
+	if (car(p) == symbol(TESTLE)) {
+		emit_expr(u, cadr(p), small_font);
+		emit_infix_operator(u, "le", small_font);
+		emit_expr(u, caddr(p), small_font);
+		return;
+	}
+
+	if (car(p) == symbol(TESTLT)) {
+		emit_expr(u, cadr(p), small_font);
+		emit_infix_operator(u, "lt", small_font);
+		emit_expr(u, caddr(p));
+		return;
+	}
+
+	// default
+
+	if (issymbol(car(p)))
+		emit_symbol(u, car(p), small_font);
+	else
+		emit_subexpr(u, car(p), small_font);
+
+	emit_args(u, p, small_font);
+}
+function
+emit_indices(u, p, small_font)
+{
+	emit_roman_text(u, "[", small_font);
+
+	p = cdr(p);
+
+	if (iscons(p)) {
+		emit_expr(u, car(p), small_font);
+		p = cdr(p);
+		while (iscons(p)) {
+			emit_roman_text(u, ",", small_font);
+			emit_expr(u, car(p), small_font);
+			p = cdr(p);
+		}
+	}
+
+	emit_roman_text(u, "]", small_font);
+}
+function
+emit_infix_operator(u, s, small_font)
+{
+	emit_space(u, small_font);
+	emit_roman_symbol(u, s, small_font);
+	emit_space(u, small_font);
+}
+function
+emit_italic_symbol(u, s, small_font)
+{
+	emit_special_symbol(u, s, small_font, 1);
+}
+function
+emit_italic_text(u, s, small_font)
+{
+	emit_text(u, s, small_font, 1);
+}
+function
+emit_line(p, small_font)
+{
+	var u = {type:LINE, a:[]};
+
+	emit_expr(u, p, small_font);
+
+	if (u.a.length == 1)
+		return u.a[0];
+
+	emit_update(u);
+
+	return u;
+}
+/* exported emit_math */
+
+function
+emit_math()
+{
+	var h, w, p = pop();
+	p = emit_line(p);
+	outbuf = "";
+	emit_svg(p, FONT_SIZE / 2, p.height);
+
+	h = p.height + p.depth;
+	w = p.width + FONT_SIZE;
+
+	// outbuf += "<rect x='0' y='0' height='" + h + "' width='" + w + "' stroke='black' stroke-width='1' fill='none'/>";
+
+	stdout.innerHTML += "<p><svg height='" + h + "' width='" + w + "'>" + outbuf + "</svg></p>";
+}
+function
+emit_matrix(u, p, d, k)
+{
+	var i, j, m, n, s, v;
+
+	if (d == p.dim.length) {
+		v = emit_line(p.elem[k]);
+		u.a.push(v);
+		return;
+	}
+
+	n = p.dim[d];
+	m = p.dim[d + 1];
+
+	// span
+
+	s = 1;
+
+	for (i = d + 2; i < p.dim.length; i++)
+		s *= p.dim[i];
+
+	v = {type:TABLE, n:n, m:m, a:[]};
+
+	for (i = 0; i < n; i++)
+		for (j = 0; j < m; j++)
+			emit_matrix(v, p, d + 2, k + (i * m + j) * s);
+
+	emit_update_table(v);
+
+	u.a.push(v);
+}
+function
+emit_medium_space(u, small_font)
+{
+	var v = {type:SPACE, height:0, depth:0};
+
+	if (small_font)
+		v.width = SMALL_MEDIUM_SPACE;
+	else
+		v.width = MEDIUM_SPACE;
+
+	u.a.push(v);
+}
+function
+emit_numerators(p, small_font)
+{
+	var q, u;
+
+	u = {type:LINE, a:[]};
+
+	p = cdr(p);
+	q = car(p);
+
+	while (iscons(p)) {
+
+		q = car(p);
+
+		if (car(q) == symbol(POWER) && isnegativenumber(caddr(q))) {
+			p = cdr(p);
+			continue; // printed in denominator
+		}
+
+		if (u.a.length > 0)
+			emit_medium_space(u, small_font);
+
+		if (isrational(q)) {
+			if (Math.abs(q.a) != 1)
+				emit_roman_text(u, Math.abs(q.a).toFixed(0), small_font);
+		} else if (car(q) == symbol(ADD))
+			emit_subexpr(u, q, small_font);
+		else
+			emit_expr(u, q, small_font);
+
+		p = cdr(p);
+	}
+
+	if (u.a.length == 0)
+		emit_roman_text(u, "1", small_font); // there were no numerators
+
+	if (u.a.length == 1)
+		return u.a[0];
+
+	emit_update(u);
+
+	return u;
+}
+function
+emit_numeric_exponent(u, p, small_font) // p is rational or double, sign is not emitted
+{
+	var v = {type:SUPERSCRIPT, a:[], small_font:small_font};
+
+	if (isrational(p)) {
+		emit_roman_text(v, Math.abs(p.a).toFixed(0), 1);
+		if (p.b != 1) {
+			emit_roman_text(v, "/", 1);
+			emit_roman_text(v, p.b.toFixed(0), 1);
+		}
+	} else
+		emit_double(v, p, 1);
+
+	emit_update_superscript(v, u.a[u.a.length - 1].height);
+
+	u.a.push(v);
+}
+function
+emit_power(u, p, small_font) // p = y^x
+{
+	if (cadr(p) == symbol(EXP1)) {
+		emit_roman_text(u, "exp", small_font);
+		emit_subexpr(u, caddr(p), small_font);
+		return;
+	}
+
+	if (isimaginaryunit(p)) {
+		if (isimaginaryunit(get_binding(symbol(SYMBOL_J))))
+			return emit_italic_text(u, "j");
+		if (isimaginaryunit(get_binding(symbol(SYMBOL_I))))
+			return emit_italic_text(u, "i");
+	}
+
+	if (isnegativenumber(caddr(p)))
+		emit_reciprocal(u, p, small_font);
+	else {
+		emit_base(u, cadr(p), small_font);
+		emit_exponent(u, caddr(p), small_font);
+	}
+}
+function
+emit_rational(u, p, small_font)
+{
+	var num, den, v;
+
+	if (p.b == 1) {
+		emit_roman_text(u, Math.abs(p.a).toFixed(0), small_font);
+		return;
+	}
+
+	num = {type:LINE, a:[]};
+	den = {type:LINE, a:[]};
+
+	emit_roman_text(num, Math.abs(p.a).toFixed(0), 1);
+	emit_roman_text(den, p.b.toFixed(0), 1);
+
+	if (num.a.length == 1)
+		num = num.a[0];
+	else
+		emit_update(num);
+
+	if (den.a.length == 1)
+		den = den.a[0];
+	else
+		emit_update(den);
+
+	v = {type:FRACTION, num:num, den:den, small_font:small_font};
+
+	emit_update_fraction(v);
+
+	u.a.push(v);
+}
+function
+emit_reciprocal(u, p, small_font) // p = y^x where x is a negative number
+{
+	var num, den, v;
+
+	num = {type:LINE, a:[]};
+	den = {type:LINE, a:[]};
+
+	emit_roman_text(num, "1", small_font);
+
+	if (isminusone(caddr(p)))
+		emit_expr(den, cadr(p), small_font);
+	else {
+		emit_base(den, cadr(p), small_font);
+		emit_numeric_exponent(den, caddr(p)); // sign is not emitted
+	}
+
+	if (num.a.length == 1)
+		num = num.a[0];
+	else
+		emit_update(num);
+
+	if (den.a.length == 1)
+		den = den.a[0];
+	else
+		emit_update(den);
+
+	v = {type:FRACTION, num:num, den:den, small_font:small_font};
+
+	emit_update_fraction(v);
+
+	u.a.push(v);
+}
+function
+emit_roman_symbol(u, s, small_font)
+{
+	emit_special_symbol(u, s, small_font, 0);
+}
+function
+emit_roman_text(u, s, small_font)
+{
+	emit_text(u, s, small_font, 0);
+}
+function
+emit_space(u, small_font)
+{
+	var v = {type:SPACE, height:0, depth:0};
+
+	if (small_font)
+		v.width = WIDTH_RATIO * SMALL_FONT_SIZE;
+	else
+		v.width = WIDTH_RATIO * FONT_SIZE;
+
+	u.a.push(v);
+}
+function
+emit_special_symbol(u, s, small_font, italic_font)
+{
+	var r, size, v;
+
+	r = emit_gtab[s];
+
+	s = "&" + s + ";";
+
+	v = {type:TEXT, s:s, small_font:small_font, italic_font:italic_font};
+
+	if (small_font)
+		size = SMALL_FONT_SIZE;
+	else
+		size = FONT_SIZE;
+
+	v.height = HEIGHT_RATIO * size;
+	v.depth = DEPTH_RATIO * size;
+	v.width = r * WIDTH_RATIO * size;
+
+	u.a.push(v);
+}
+function
+emit_string(u, p, small_font)
+{
+	emit_roman_text(u, p.string, small_font);
+}
+function
+emit_subexpr(u, p, small_font)
+{
+	var v = {type:PAREN, a:[], small_font:small_font};
+
+	emit_expr(v, p, small_font);
+
+	emit_update(v);
+
+	if (small_font)
+		v.width += 2 * SMALL_DELIM_WIDTH;
+	else
+		v.width += 2 * DELIM_WIDTH;
+
+	u.a.push(v);
+}
+function
+emit_svg(p, x, y)
+{
+	var dx, dy, i, n, size, x1, x2;
+
+	switch (p.type) {
+
+	case SPACE:
+		break;
+
+	case TEXT:
+//		emit_svg_line(x + p.width, y + p.depth, x + p.width, y - p.height, 1); // for checking char widths
+		dx = p.width / 2;
+		emit_svg_text(p.s, p.small_font, p.italic_font, x + dx, y);
+		break;
+
+	case LINE:
+		dx = 0;
+		n = p.a.length;
+		for (i = 0; i < n; i++) {
+			emit_svg(p.a[i], x + dx, y);
+			dx += p.a[i].width;
+		}
+		break;
+
+	case PAREN:
+
+		emit_svg_delims(p, x, y)
+
+		if (p.small_font)
+			dx = SMALL_DELIM_WIDTH;
+		else
+			dx = DELIM_WIDTH;
+
+		n = p.a.length;
+
+		for (i = 0; i < n; i++) {
+			emit_svg(p.a[i], x + dx, y);
+			dx += p.a[i].width;
+		}
+
+		break;
+
+	case SUPERSCRIPT:
+
+		y += p.depth; // p.depth is negative
+
+		n = p.a.length;
+
+		for (i = 0; i < n; i++) {
+			emit_svg(p.a[i], x, y);
+			x += p.a[i].width;
+		}
+
+		break;
+
+	case SUBSCRIPT:
+
+		if (p.small_font)
+			y += SMALL_X_HEIGHT;
+		else
+			y += X_HEIGHT;
+
+		n = p.a.length;
+
+		for (i = 0; i < n; i++) {
+			emit_svg(p.a[i], x, y);
+			x += p.a[i].width;
+		}
+
+		break;
+
+	case FRACTION:
+
+		dx = (p.width - p.num.width) / 2;
+
+		if (dx < 0)
+			dx = 0;
+
+		if (p.small_font)
+			dy = -SMALL_X_HEIGHT - SMALL_VSPACE - p.num.depth;
+		else
+			dy = -X_HEIGHT - VSPACE - p.num.depth;
+
+		emit_svg(p.num, x + dx, y + dy);
+
+		dx = (p.width - p.den.width) / 2;
+
+		if (dx < 0)
+			dx = 0;
+
+		if (p.small_font)
+			dy = -SMALL_X_HEIGHT + SMALL_VSPACE + p.den.height;
+		else
+			dy = -X_HEIGHT + VSPACE + p.den.height;
+
+		emit_svg(p.den, x + dx, y + dy);
+
+		if (p.small_font)
+			size = SMALL_FONT_SIZE;
+		else
+			size = FONT_SIZE;
+
+		x1 = x + THIN_SPACE_RATIO * size;
+		x2 = x + p.width - THIN_SPACE_RATIO * size;
+
+		y = y - X_HEIGHT_RATIO * size;
+
+		emit_svg_line(x1, y, x2, y, 1);
+
+		break;
+
+	case TABLE:
+		emit_svg_delims(p, x, y);
+		emit_svg_table(p, x + DELIM_WIDTH, y);
+		break;
+	}
+}
+function
+emit_svg_delims(p, x, y)
+{
+	if (p.small_font) {
+		if (p.height > SMALL_FONT_HEIGHT || p.depth > SMALL_FONT_DEPTH) {
+			emit_svg_ldelim(p, x, y);
+			emit_svg_rdelim(p, x, y);
+		} else
+			emit_svg_parens(p, x, y);
+	} else {
+		if (p.height > FONT_HEIGHT || p.depth > FONT_DEPTH) {
+			emit_svg_ldelim(p, x, y);
+			emit_svg_rdelim(p, x, y);
+		} else
+			emit_svg_parens(p, x, y);
+	}
+}
+function
+emit_svg_ldelim(p, x, y)
+{
+	var d, h, t, w, x1, x2, y1, y2;
+
+	if (p.small_font) {
+		t = 1;
+		w = SMALL_DELIM_WIDTH
+	} else {
+		t = 2;
+		w = DELIM_WIDTH;
+	}
+
+	h = p.height;
+	d = p.depth;
+
+	x1 = x + w / 2;
+	x2 = x + w / 2;
+
+	y1 = y - h;
+	y2 = y + d;
+
+	emit_svg_line(x1, y1, x2, y2, t); // vertical line
+
+	x1 = x + w / 2;
+	x2 = x + w;
+
+	y1 = y - h + t / 2;
+	y2 = y - h + t / 2;
+
+	emit_svg_line(x1, y1, x2, y2, t); // top segment
+
+	y1 = y + d - t / 2;
+	y2 = y + d - t / 2;
+
+	emit_svg_line(x1, y1, x2, y2, t); // bottom segment
+}
+function
+emit_svg_line(x1, y1, x2, y2, t)
+{
+	var X1 = " x1='" + x1 + "'";
+	var Y1 = " y1='" + y1 + "'";
+	var X2 = " x2='" + x2 + "'";
+	var Y2 = " y2='" + y2 + "'";
+	var T = " style='stroke:black;stroke-width:" + t + "'";
+
+	outbuf += "<line" + X1 + Y1 + X2 + Y2 + T + "/>";
+}
+function
+emit_svg_parens(p, x, y)
+{
+	var dx;
+
+	if (p.small_font)
+		dx = SMALL_DELIM_WIDTH / 2;
+	else
+		dx = DELIM_WIDTH / 2;
+
+	emit_svg_text("(", p.small_font, 0, x + dx, y);
+
+	if (p.small_font)
+		dx = p.width - SMALL_DELIM_WIDTH / 2;
+	else
+		dx = p.width - DELIM_WIDTH / 2;
+
+	emit_svg_text(")", p.small_font, 0, x + dx, y);
+}
+function
+emit_svg_rdelim(p, x, y)
+{
+	var d, h, t, w, x1, x2, y1, y2;
+
+	if (p.small_font) {
+		t = 1;
+		w = SMALL_DELIM_WIDTH;
+	} else {
+		t = 2;
+		w = DELIM_WIDTH;
+	}
+
+	h = p.height;
+	d = p.depth;
+
+	x1 = x + p.width - w / 2;
+	x2 = x + p.width - w / 2;
+
+	y1 = y - h;
+	y2 = y + d;
+
+	emit_svg_line(x1, y1, x2, y2, t); // vertical segment
+
+	x1 = x + p.width - w;
+	x2 = x + p.width - w / 2;
+
+	y1 = y - h + t / 2;
+	y2 = y - h + t / 2;
+
+	emit_svg_line(x1, y1, x2, y2, t); // top segment
+
+	y1 = y + d - t / 2;
+	y2 = y + d - t / 2;
+
+	emit_svg_line(x1, y1, x2, y2, t); // bottom segment
+}
+function
+emit_svg_table(p, x, y)
+{
+	var dx, i, j, m, n, w;
+	var cell_height, cell_depth, cell_width;
+
+	n = p.n; // number of rows
+	m = p.m; // number of columns
+
+	y -= p.height;
+
+	for (i = 0; i < n; i++) { // for each row
+
+		dx = 0;
+
+		cell_height = p.a[i * m].cell_height;
+		cell_depth = p.a[i * m].cell_depth;
+
+		y += cell_height;
+
+		for (j = 0; j < m; j++) { // for each column
+			cell_width = p.a[j].cell_width;
+			w = p.a[i * m + j].width;
+			emit_svg(p.a[i * m + j], x + dx + (cell_width - w) / 2, y);
+			dx += cell_width;
+		}
+
+		y += cell_depth;
+	}
+}
+function
+emit_svg_text(s, small_font, italic_font, x, y)
+{
+	outbuf += "<text style='text-anchor:middle;font-family:times;";
+
+	if (small_font) {
+		if (italic_font)
+			outbuf += "font-size:14pt;font-style:italic;'";
+		else
+			outbuf += "font-size:14pt;'";
+	} else {
+		if (italic_font)
+			outbuf += "font-size:20pt;font-style:italic;'";
+		else
+			outbuf += "font-size:20pt;'";
+	}
+
+	outbuf += " x='" + x + "' y='" + y + "'>" + s + "</text>";
+}
+function
+emit_symbol(u, p, small_font)
+{
+	var k, n, s, v;
+
+	if (p == symbol(EXP1)) {
+		emit_roman_text(u, "exp(1)", small_font);
+		return;
+	}
+
+	s = printname(p);
+
+	if (iskeyword(p) || p == symbol(LAST) || p == symbol(TRACE)) {
+		emit_roman_text(u, s, small_font);
+		return;
+	}
+
+	n = emit_symbol_scan(s, 0);
+
+	if (n == 1)
+		emit_italic_text(u, s[0], small_font);
+	else if (s[0] >= 'A' && s[0] <= 'Z')
+		emit_roman_symbol(u, s.substring(0, n), small_font);
+	else
+		emit_italic_symbol(u, s.substring(0, n), small_font);
+
+	if (n == s.length)
+		return;
+
+	// emit subscript
+
+	v = {type:SUBSCRIPT, a:[], small_font:small_font};
+
+	k = n;
+
+	while (k < s.length) {
+
+		n = emit_symbol_scan(s, k);
+
+		if (n == 1) {
+			if (s[k] >= '0' && s[k] <= '9')
+				emit_roman_text(v, s[k], 1);
+			else
+				emit_italic_text(v, s[k], 1);
+		} else if (s[k] >= 'A' && s[k] <= 'Z')
+			emit_roman_symbol(v, s.substring(k, k + n), 1);
+		else
+			emit_italic_symbol(v, s.substring(k, k + n), 1);
+
+		k += n;
+	}
+
+	emit_update(v);
+
+	if (small_font) {
+		v.height -= SMALL_X_HEIGHT;
+		v.depth += SMALL_X_HEIGHT;
+	} else {
+		v.height -= X_HEIGHT;
+		v.depth += X_HEIGHT;
+	}
+
+	u.a.push(v);
+}
+function
+emit_symbol_scan(s, k)
+{
+	var i, n, t;
+	n = emit_stab.length;
+	for (i = 0; i < n; i++) {
+		t = emit_stab[i];
+		if (s.startsWith(t, k))
+			return t.length;
+	}
+	return 1;
+}
+function
+emit_tensor(u, p)
+{
+	if (p.dim.length % 2 == 1)
+		emit_vector(u, p); // odd rank
+	else
+		emit_matrix(u, p, 0, 0); // even rank
+}
+function
+emit_term(u, p, small_font)
+{
+	if (car(p) == symbol(MULTIPLY))
+		emit_term_nib(u, p, small_font);
+	else
+		emit_factor(u, p, small_font);
+}
+function
+emit_term_nib(u, p, small_font)
+{
+	var n = 0, q, t;
+
+	// count denominators
+
+	t = p;
+
+	p = cdr(p);
+	while (iscons(p)) {
+		q = car(p);
+		if (car(q) == symbol(POWER) && isnegativenumber(caddr(q)))
+			n++;
+		p = cdr(p);
+	}
+
+	p = t;
+
+	if (n > 0) {
+		emit_fraction(u, p, n, small_font);
+		return;
+	}
+
+	// no denominators
+
+	p = cdr(p);
+
+	if (isrational(car(p)) && isminusone(car(p)))
+		p = cdr(p); // skip -1
+
+	emit_factor(u, car(p), small_font);
+
+	p = cdr(p);
+
+	while (iscons(p)) {
+		emit_medium_space(u, small_font);
+		emit_factor(u, car(p), small_font);
+		p = cdr(p);
+	}
+}
+function
+emit_text(u, s, small_font, italic_font)
+{
+	var c, i, n, v;
+
+	n = s.length;
+
+	for (i = 0; i < n; i++) {
+
+		c = s[i];
+
+		v = {type:TEXT, s:c, small_font:small_font, italic_font:italic_font};
+
+		emit_update_text(v);
+
+		if (c == '&')
+			v.s = "&amp;";
+		else if (c == '<')
+			v.s = "&lt;";
+		else if (c == '>')
+			v.s = "&gt";
+
+		u.a.push(v);
+	}
+}
+function
+emit_update(u)
+{
+	var d, h, i, w;
+
+	h = 0;
+	d = 0;
+	w = 0;
+
+	for (i = 0; i < u.a.length; i++) {
+		h = Math.max(h, u.a[i].height);
+		d = Math.max(d, u.a[i].depth);
+		w += u.a[i].width;
+	}
+
+	u.height = h;
+	u.depth = d;
+	u.width = w;
+}
+function
+emit_update_fraction(u)
+{
+	u.width = Math.max(u.num.width, u.den.width);
+
+	if (u.small_font) {
+		u.height = SMALL_X_HEIGHT + SMALL_VSPACE + u.num.depth + u.num.height;
+		u.depth = -SMALL_X_HEIGHT + SMALL_VSPACE + u.den.height + u.den.depth;
+		u.width += WIDTH_RATIO * SMALL_FONT_SIZE; // extra
+	} else {
+		u.height = X_HEIGHT + VSPACE + u.num.depth + u.num.height;
+		u.depth = -X_HEIGHT + VSPACE + u.den.height + u.den.depth;
+		u.width += WIDTH_RATIO * FONT_SIZE; // extra
+	}
+}
+function
+emit_update_superscript(u, h) // h is height of neighbor
+{
+	var d;
+
+	emit_update(u);
+
+	// move above baseline
+
+	if (u.small_font) {
+		u.height = u.height + u.depth + SMALL_X_HEIGHT;
+		u.depth = -u.depth - SMALL_X_HEIGHT;
+	} else {
+		u.height = u.height + u.depth + X_HEIGHT;
+		u.depth = -u.depth - X_HEIGHT;
+	}
+
+	d = h - u.height;
+
+	if (d > 0) {
+		u.height += d;
+		u.depth -= d;
+	}
+}
+function
+emit_update_table(u)
+{
+	var d, h, i, j, m, n, w;
+
+	n = u.n; // number of rows
+	m = u.m; // number of columns
+
+	// row height and depth
+
+	for (i = 0; i < n; i++) { // for each row
+		h = 0;
+		d = 0;
+		for (j = 0; j < m; j++) { // for each column
+			h = Math.max(h, u.a[i * m + j].height);
+			d = Math.max(d, u.a[i * m + j].depth);
+		}
+		u.a[i * m].cell_height = h + TABLE_VSPACE;
+		u.a[i * m].cell_depth = d + TABLE_VSPACE;
+	}
+
+	// column width
+
+	for (j = 0; j < m; j++) { // for each column
+		w = 0;
+		for (i = 0; i < n; i++) // for each row
+			w = Math.max(w, u.a[i * m + j].width); // w is max width in column
+		u.a[j].cell_width = w + 2 * TABLE_HSPACE;
+	}
+
+	// table height and depth
+
+	h = 0;
+
+	for (i = 0; i < n; i++) // for each row
+		h += u.a[i * m].cell_height + u.a[i * m].cell_depth;
+
+	u.height = h / 2 + X_HEIGHT;
+	u.depth = h - u.height;
+
+	// table width
+
+	w = 0;
+
+	for (j = 0; j < m; j++)
+		w += u.a[j].cell_width;
+
+	u.width = w + 2 * DELIM_WIDTH;
+}
+function
+emit_update_text(u)
+{
+	var n, r, size;
+
+	n = u.s.charCodeAt(0);
+
+	r = emit_wtab[n];
+
+	if (u.small_font)
+		size = SMALL_FONT_SIZE;
+	else
+		size = FONT_SIZE;
+
+	u.height = HEIGHT_RATIO * size;
+	u.depth = DEPTH_RATIO * size;
+	u.width = r * WIDTH_RATIO * size;
+}
+function
+emit_vector(u, p)
+{
+	var i, n, s, v;
+
+	n = p.dim[0]; // number of rows
+
+	// span
+
+	s = 1;
+
+	for (i = 1; i < p.dim.length; i++)
+		s *= p.dim[i];
+
+	v = {type:TABLE, n:n, m:1, a:[]};
+
+	for (i = 0; i < n; i++)
+		emit_matrix(v, p, 1, i * s);
+
+	emit_update_table(v);
+
+	u.a.push(v);
 }
 function
 equal(p1, p2)
@@ -8732,6 +10125,8 @@ print_buf(s, color)
 
 	stdout.innerHTML += s;
 }
+/* exported print_math */
+
 const MML_MINUS = "<mo>-</mo>"
 const MML_MINUS_1 = "<mo>(</mo><mo>-</mo><mn>1</mn><mo>)</mo>"
 const MML_LP = "<mrow><mo>(</mo>"
@@ -9283,7 +10678,7 @@ print_arglist(p)
 	if (iscons(p)) {
 		print_expr(car(p));
 		p = cdr(p);
-		while(iscons(p)) {
+		while (iscons(p)) {
 			print_mo(",");
 			print_expr(car(p));
 			p = cdr(p);
@@ -9506,7 +10901,7 @@ print_result()
 
 	prep_symbol_equals(p1, p2);
 
-	print_math();
+	emit_math();
 }
 function
 printname(p)
