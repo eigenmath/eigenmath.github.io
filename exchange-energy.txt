@@ -1,4 +1,4 @@
-"Exchange energy for two electrons in a box"
+-- Exchange energy for two electrons in a box (10 seconds)
 
 pi = float(pi) -- use numerical value of pi
 
@@ -37,7 +37,7 @@ S(f) = (L/N)^2 sum(j,1,N,sum(k,1,N,
 
 phi(n,x) = sqrt(2 / L) sin(n pi x / L)
 
--- width of box
+"Length"
 
 L = 1.0 10^(-9) meter
 L
