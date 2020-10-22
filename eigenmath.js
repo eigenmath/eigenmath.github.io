@@ -3642,7 +3642,7 @@ emit_svg(p, x, y)
 	case TEXT:
 //		if (p.s[0] != " ") emit_svg_line(x + p.width, y + p.depth, x + p.width, y - p.height, 1); // for checking char widths
 		x += p.width / 2;
-		emit_svg_text(p.s, p.small_font, p.italic_font, x, y);
+		emit_svg_text(p, x, y);
 		break;
 
 	case LINE:
@@ -3894,7 +3894,7 @@ emit_svg_text(p, x, y)
 	if (p.italic_font)
 		outbuf += "font-style:italic;";
 
-	outbuf += "'" + X + Y + s + "</text>";
+	outbuf += "'" + X + Y + ">" + s + "</text>";
 }
 function
 emit_symbol(u, p, small_font)
