@@ -3640,8 +3640,6 @@ emit_svg(p, x, y)
 		break;
 
 	case TEXT:
-//		if (p.s[0] != " ") emit_svg_line(x + p.width, y + p.depth, x + p.width, y - p.height, 1); // for checking char widths
-		x += p.width / 2;
 		emit_svg_text(p, x, y);
 		break;
 
@@ -3872,6 +3870,8 @@ emit_svg_table(p, x, y)
 function
 emit_svg_text(p, x, y)
 {
+//if (p.s != " ") emit_svg_line(x + p.width, y + p.depth, x + p.width, y - p.height, 1); // for checking char widths
+
 	var s = p.s;
 
 	if (s == '&')
@@ -3881,8 +3881,10 @@ emit_svg_text(p, x, y)
 	else if (s == '>')
 		s = "&gt;";
 
-	var X = "x='" + x + "'";
-	var Y = "y='" + y + "'";
+	x += p.width / 2;
+
+	x = "x='" + x + "'";
+	y = "y='" + y + "'";
 
 	outbuf += "<text style='text-anchor:middle;font-family:times;";
 
@@ -3894,7 +3896,7 @@ emit_svg_text(p, x, y)
 	if (p.italic_font)
 		outbuf += "font-style:italic;";
 
-	outbuf += "'" + X + Y + ">" + s + "</text>";
+	outbuf += "'" + x + y + ">" + s + "</text>";
 }
 function
 emit_symbol(u, p, small_font)
