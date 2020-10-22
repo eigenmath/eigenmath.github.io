@@ -2935,13 +2935,13 @@ const emit_wtab = [
 	1.5,	0.8,	0.9,	1.4,	1.3,	1.8,	1.3,	1.3,
 
 //	P	Q	R	S	T	U	V	W
-	1.3,	1.3,	1.3,	1.3,	1.3,	1.3,	1.3,	1.7,
+	1.3,	1.3,	1.3,	1.1,	1.3,	1.3,	1.3,	1.7,
 
 //	X	Y	Z	[	\	]	^	_
 	1.3,	1.3,	1.3,	DWR,	1.0,	DWR,	1.0,	1.0,
 
 //	`	a	b	c	d	e	f	g
-	1.0,	0.9,	0.9,	0.8,	1.0,	0.8,	0.8,	1.0,
+	1.0,	0.9,	0.9,	0.9,	1.0,	0.9,	0.8,	1.0,
 
 //	h	i	j	k	l	m	n	o
 	1.0,	0.5,	0.5,	1.0,	0.5,	1.4,	1.0,	0.9,
@@ -3766,7 +3766,7 @@ emit_svg_delims(p, x, y)
 function
 emit_svg_ldelim(p, x, y)
 {
-	var d, h, t, w, x1, x2, y1, y2;
+	var t, w;
 
 	if (p.small_font) {
 		t = 1;
@@ -3776,29 +3776,15 @@ emit_svg_ldelim(p, x, y)
 		w = DELIM_WIDTH;
 	}
 
-	h = p.height;
-	d = p.depth;
+	var x1 = Math.round(x + w / 2);
+	var x2 = x1 + w / 2;
 
-	x1 = x + w / 2;
-	x2 = x + w / 2;
+	var y1 = Math.round(y - p.height + t);
+	var y2 = Math.round(y + p.depth - t);
 
-	y1 = y - h;
-	y2 = y + d;
-
-	emit_svg_line(x1, y1, x2, y2, t); // vertical line
-
-	x1 = x + w / 2;
-	x2 = x + w;
-
-	y1 = y - h + t / 2;
-	y2 = y - h + t / 2;
-
-	emit_svg_line(x1, y1, x2, y2, t); // top segment
-
-	y1 = y + d - t / 2;
-	y2 = y + d - t / 2;
-
-	emit_svg_line(x1, y1, x2, y2, t); // bottom segment
+	emit_svg_line(x1, y1, x1, y2, t); // stem
+	emit_svg_line(x1, y1, x2, y1, t); // top segment
+	emit_svg_line(x1, y2, x2, y2, t); // bottom segment
 }
 function
 emit_svg_line(x1, y1, x2, y2, t)
@@ -3833,7 +3819,7 @@ emit_svg_parens(p, x, y)
 function
 emit_svg_rdelim(p, x, y)
 {
-	var d, h, t, w, x1, x2, y1, y2;
+	var t, w;
 
 	if (p.small_font) {
 		t = 1;
@@ -3843,29 +3829,15 @@ emit_svg_rdelim(p, x, y)
 		w = DELIM_WIDTH;
 	}
 
-	h = p.height;
-	d = p.depth;
+	var x1 = Math.round(x + p.width - w / 2);
+	var x2 = x1 - w / 2;
 
-	x1 = x + p.width - w / 2;
-	x2 = x + p.width - w / 2;
+	var y1 = Math.round(y - p.height + t);
+	var y2 = Math.round(y + p.depth - t);
 
-	y1 = y - h;
-	y2 = y + d;
-
-	emit_svg_line(x1, y1, x2, y2, t); // vertical segment
-
-	x1 = x + p.width - w;
-	x2 = x + p.width - w / 2;
-
-	y1 = y - h + t / 2;
-	y2 = y - h + t / 2;
-
-	emit_svg_line(x1, y1, x2, y2, t); // top segment
-
-	y1 = y + d - t / 2;
-	y2 = y + d - t / 2;
-
-	emit_svg_line(x1, y1, x2, y2, t); // bottom segment
+	emit_svg_line(x1, y1, x1, y2, t); // stem
+	emit_svg_line(x1, y1, x2, y1, t); // top segment
+	emit_svg_line(x1, y2, x2, y2, t); // bottom segment
 }
 function
 emit_svg_table(p, x, y)
