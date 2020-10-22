@@ -3364,13 +3364,13 @@ emit_math()
 	p = emit_line(p);
 	outbuf = "";
 	emit_svg(p, FONT_SIZE / 2, p.height);
-
 	h = p.height + p.depth;
 	w = p.width + FONT_SIZE;
-
-	// outbuf += "<rect x='0' y='0' height='" + h + "' width='" + w + "' stroke='black' stroke-width='1' fill='none'/>";
-
-	stdout.innerHTML += "<p><svg height='" + h + "' width='" + w + "'>" + outbuf + "</svg></p>";
+	h = "height='" + h + "'";
+	w = "width='" + w + "'";
+	outbuf = "<p><svg " + h + w + ">\n" + outbuf + "</svg></p>";
+	//print_buf(outbuf, RED);
+	stdout.innerHTML += outbuf;
 }
 function
 emit_matrix(u, p, d, k)
@@ -3787,32 +3787,32 @@ emit_svg_ldelim(p, x, y)
 function
 emit_svg_line(x1, y1, x2, y2, t)
 {
-	var X1 = " x1='" + x1 + "'";
-	var Y1 = " y1='" + y1 + "'";
-	var X2 = " x2='" + x2 + "'";
-	var Y2 = " y2='" + y2 + "'";
-	var T = " style='stroke:black;stroke-width:" + t + "'";
+	var s;
 
-	outbuf += "<line" + X1 + Y1 + X2 + Y2 + T + "/>";
+	x1 = "x1='" + x1 + "'";
+	y1 = "y1='" + y1 + "'";
+	x2 = "x2='" + x2 + "'";
+	y2 = "y2='" + y2 + "'";
+
+	s = "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n"
+
+	outbuf += s;
 }
 function
 emit_svg_parens(p, x, y)
 {
-	var dx;
+	var l, r, w;
 
 	if (p.small_font)
-		dx = SMALL_DELIM_WIDTH / 2;
+		w = SMALL_DELIM_WIDTH;
 	else
-		dx = DELIM_WIDTH / 2;
+		w = DELIM_WIDTH;
 
-	emit_svg_text("(", p.small_font, 0, x + dx, y);
+	l = {type:TEXT, s:"(", height:p.height, depth:p.depth, width:w, small_font:p.small_font, italic_font:0};
+	r = {type:TEXT, s:")", height:p.height, depth:p.depth, width:w, small_font:p.small_font, italic_font:0};
 
-	if (p.small_font)
-		dx = p.width - SMALL_DELIM_WIDTH / 2;
-	else
-		dx = p.width - DELIM_WIDTH / 2;
-
-	emit_svg_text(")", p.small_font, 0, x + dx, y);
+	emit_svg_text(l, x, y);
+	emit_svg_text(r, x + p.width - w, y);
 }
 function
 emit_svg_rdelim(p, x, y)
@@ -3872,7 +3872,9 @@ emit_svg_text(p, x, y)
 {
 //if (p.s != " ") emit_svg_line(x + p.width, y + p.depth, x + p.width, y - p.height, 1); // for checking char widths
 
-	var s = p.s;
+	var s, t;
+
+	s = p.s;
 
 	if (s == '&')
 		s = "&amp;";
@@ -3886,17 +3888,19 @@ emit_svg_text(p, x, y)
 	x = "x='" + x + "'";
 	y = "y='" + y + "'";
 
-	outbuf += "<text style='text-anchor:middle;font-family:times;";
+	t = "<text style='text-anchor:middle;font-family:times;";
 
 	if (p.small_font)
-		outbuf += "font-size:14pt;";
+		t += "font-size:14pt;";
 	else
-		outbuf += "font-size:20pt;";
+		t += "font-size:20pt;";
 
 	if (p.italic_font)
-		outbuf += "font-style:italic;";
+		t += "font-style:italic;";
 
-	outbuf += "'" + x + y + ">" + s + "</text>";
+	t += "'" + x + y + ">" + s + "</text>\n";
+
+	outbuf += t;
 }
 function
 emit_symbol(u, p, small_font)

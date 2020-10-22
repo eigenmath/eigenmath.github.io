@@ -35,8 +35,6 @@ s = dot(p1 + p2,gmunu,p1 + p2)
 t = dot(p1 - p3,gmunu,p1 - p3)
 u = dot(p1 - p4,gmunu,p1 - p4)
 
-"Checking probability density in center of mass frame (1=ok)"
-
 f11 = -16 dot(p1,gmunu,p1) dot(p2,gmunu,p4) +
        32 dot(p1,gmunu,p2) dot(p1,gmunu,p4) +
        32 dot(p1,gmunu,p4) dot(p2,gmunu,p2) +
@@ -66,6 +64,14 @@ f22 = 16 dot(p2,gmunu,p2) dot(p2,gmunu,p4) -
       48 m^2 dot(p2,gmunu,p4) +
       64 m^2 dot(p3,gmunu,p3) +
       64 m^2 dot(p3,gmunu,p4) + 64 m^4
+
+"Probability density"
+
+f11
+f12
+f22
+
+"Checking probability density in center of mass frame (1=ok)"
 
 f11 == -8 s u + 24 s m^2 + 8 u m^2 + 8 m^4
 f12 == 8 s m^2 + 8 u m^2 + 16 m^4
