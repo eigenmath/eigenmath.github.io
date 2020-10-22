@@ -3870,23 +3870,31 @@ emit_svg_table(p, x, y)
 	}
 }
 function
-emit_svg_text(s, small_font, italic_font, x, y)
+emit_svg_text(p, x, y)
 {
+	var s = p.s;
+
+	if (s == '&')
+		s = "&amp;";
+	else if (s == '<')
+		s = "&lt;";
+	else if (s == '>')
+		s = "&gt;";
+
+	var X = "x='" + x + "'";
+	var Y = "y='" + y + "'";
+
 	outbuf += "<text style='text-anchor:middle;font-family:times;";
 
-	if (small_font) {
-		if (italic_font)
-			outbuf += "font-size:14pt;font-style:italic;'";
-		else
-			outbuf += "font-size:14pt;'";
-	} else {
-		if (italic_font)
-			outbuf += "font-size:20pt;font-style:italic;'";
-		else
-			outbuf += "font-size:20pt;'";
-	}
+	if (p.small_font)
+		outbuf += "font-size:14pt;";
+	else
+		outbuf += "font-size:20pt;";
 
-	outbuf += " x='" + x + "' y='" + y + "'>" + s + "</text>";
+	if (p.italic_font)
+		outbuf += "font-style:italic;";
+
+	outbuf += "'" + X + Y + s + "</text>";
 }
 function
 emit_symbol(u, p, small_font)
@@ -4024,25 +4032,11 @@ emit_term_nib(u, p, small_font)
 function
 emit_text(u, s, small_font, italic_font)
 {
-	var c, i, n, v;
-
+	var i, n, v;
 	n = s.length;
-
 	for (i = 0; i < n; i++) {
-
-		c = s[i];
-
-		v = {type:TEXT, s:c, small_font:small_font, italic_font:italic_font};
-
+		v = {type:TEXT, s:s[i], small_font:small_font, italic_font:italic_font};
 		emit_update_text(v);
-
-		if (c == '&')
-			v.s = "&amp;";
-		else if (c == '<')
-			v.s = "&lt;";
-		else if (c == '>')
-			v.s = "&gt";
-
 		u.a.push(v);
 	}
 }
