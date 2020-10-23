@@ -2602,7 +2602,7 @@ draw(F, X)
 	draw_yrange();
 
 	var h = DRAW_SIZE + 4 * DRAW_PAD;
-	var w = DRAW_INDENT + DRAW_SIZE + 2 * DRAW_PAD;
+	var w = DRAW_INDENT + DRAW_SIZE + 4 * DRAW_PAD;
 
 	h = "height='" + h + "'";
 	w = "width='" + w + "'";
@@ -2642,9 +2642,9 @@ function
 draw_data(F, X)
 {
 	var i, x;
-	for (i = 0; i < DRAW_COUNT; i++) {
+	for (i = 0; i <= DRAW_COUNT; i++) {
 		x = xmin + (xmax - xmin) * i / DRAW_COUNT;
-		draw_point(F, X, x);
+		draw_point(F, X, x, 1);
 	}
 }
 function
@@ -2676,30 +2676,26 @@ draw_evalf(F, X, x)
 function
 draw_fill(F, X)
 {
-	var i, j, m, n, x, min, max;
+	var i, j, m, n, p1, p2, x;
 
 	n = draw_array.length;
 
-	if (n == 0)
+	if (n < 2)
 		return;
 
-	m = Math.floor(400 / n); // fill count
+	for (i = 0; i < n - 1; i++) {
 
-	min = draw_array[0];
-	max = draw_array[n - 1];
+		p1 = draw_array[i];
+		p2 = draw_array[i + 1];
 
-	x = min - (xmax - xmin) / DRAW_COUNT;
-	draw_array.unshift(x);
+		if (p1.drawn == 0 && p2.drawn == 0)
+			return;
 
-	x = max + (xmax - xmin) / DRAW_COUNT;
-	draw_array.push(x);
+		m = Math.abs(p1.y - p2.y);
 
-	for (i = 0; i < n + 1; i++) {
-		min = draw_array[i];
-		max = draw_array[i + 1];
 		for (j = 1; j < m; j++) {
-			x = min + (max - min) * j / m;
-			draw_point(F, X, x);
+			x = p1.x + (p2.x - p1.x) * j / m;
+			draw_point(F, X, x, 0);
 		}
 	}
 }
@@ -2759,18 +2755,16 @@ draw_line(x1, y1, x2, y2, t)
 	outbuf += "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n";
 }
 function
-draw_point(F, X, x)
+draw_point(F, X, x, save)
 {
-	var p, y, t;
+	var drawn, p, y, t;
 
-	t = x;
+	t = DRAW_SIZE * (x - xmin) / (xmax - xmin);
 
-	x = DRAW_SIZE * (x - xmin) / (xmax - xmin);
-
-	if (x < 0 || x > DRAW_SIZE)
+	if (t < 0 || t > DRAW_SIZE)
 		return;
 
-	draw_evalf(F, X, t);
+	draw_evalf(F, X, x);
 
 	p = pop();
 
@@ -2779,15 +2773,20 @@ draw_point(F, X, x)
 
 	y = DRAW_SIZE * (1 - (p.d - ymin) / (ymax - ymin));
 
-	if (y >= 0 && y <= DRAW_SIZE) {
-		draw_array.push(t);
-		draw_line(x, y, x, y, 2);
+	if (y < 0 || y > DRAW_SIZE)
+		drawn = 0;
+	else {
+		draw_line(t, y, t, y, 2);
+		drawn = 1;
 	}
+
+	if (save)
+		draw_array.push({x:x, y:y, drawn:drawn});
 }
 const DRAW_SIZE = 300;
 const DRAW_INDENT = 100;
 const DRAW_PAD = 10;
-const DRAW_COUNT = 101;
+const DRAW_COUNT = 201;
 
 var xmin;
 var xmax;
