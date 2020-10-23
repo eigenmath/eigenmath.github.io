@@ -3360,7 +3360,8 @@ emit_line(p, small_font)
 function
 emit_math()
 {
-	var h, w, p = pop();
+	var h, p, w;
+	p = pop();
 	p = emit_line(p);
 	outbuf = "";
 	emit_svg(p, FONT_SIZE / 2, p.height);
@@ -3747,19 +3748,21 @@ emit_svg(p, x, y)
 function
 emit_svg_delims(p, x, y)
 {
+	var h, d;
+
 	if (p.small_font) {
-		if (p.height > SMALL_FONT_HEIGHT || p.depth > SMALL_FONT_DEPTH) {
-			emit_svg_ldelim(p, x, y);
-			emit_svg_rdelim(p, x, y);
-		} else
-			emit_svg_parens(p, x, y);
+		h = SMALL_FONT_HEIGHT;
+		d = SMALL_FONT_DEPTH;
 	} else {
-		if (p.height > FONT_HEIGHT || p.depth > FONT_DEPTH) {
-			emit_svg_ldelim(p, x, y);
-			emit_svg_rdelim(p, x, y);
-		} else
-			emit_svg_parens(p, x, y);
+		h = FONT_HEIGHT;
+		d = FONT_DEPTH;
 	}
+
+	if (p.height > h || p.depth > d) {
+		emit_svg_ldelim(p, x, y);
+		emit_svg_rdelim(p, x, y);
+	} else
+		emit_svg_parens(p, x, y);
 }
 function
 emit_svg_ldelim(p, x, y)
