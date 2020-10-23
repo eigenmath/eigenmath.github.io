@@ -2601,8 +2601,8 @@ draw(F, X)
 	draw_xrange();
 	draw_yrange();
 
-	var h = DRAW_SIZE + 4 * DRAW_PAD;
-	var w = DRAW_INDENT + DRAW_SIZE + 4 * DRAW_PAD;
+	var h = DRAW_HEIGHT + 4 * DRAW_PAD;
+	var w = DRAW_INDENT + DRAW_WIDTH + 4 * DRAW_PAD;
 
 	h = "height='" + h + "'";
 	w = "width='" + w + "'";
@@ -2627,10 +2627,10 @@ function
 draw_box()
 {
 	var x1 = 0;
-	var x2 = DRAW_SIZE;
+	var x2 = DRAW_WIDTH;
 
 	var y1 = 0;
-	var y2 = DRAW_SIZE;
+	var y2 = DRAW_HEIGHT;
 
 	draw_line(x1, y1, x2, y1, 2); // top line
 	draw_line(x1, y2, x2, y2, 2); // bottom line
@@ -2680,21 +2680,21 @@ draw_labels()
 	p = pop();
 	p = emit_line(p, 1);
 	x = DRAW_INDENT - p.width - DRAW_PAD;
-	y = DRAW_PAD + DRAW_SIZE;
+	y = DRAW_PAD + DRAW_HEIGHT;
 	emit_svg(p, x, y);
 
 	push_double(xmin);
 	p = pop();
 	p = emit_line(p, 1);
 	x = DRAW_INDENT - p.width / 2;
-	y = DRAW_PAD + DRAW_SIZE + 2 * SMALL_FONT_SIZE;
+	y = DRAW_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
 	emit_svg(p, x, y);
 
 	push_double(xmax);
 	p = pop();
 	p = emit_line(p, 1);
-	x = DRAW_INDENT + DRAW_SIZE - p.width / 2;
-	y = DRAW_PAD + DRAW_SIZE + 2 * SMALL_FONT_SIZE;
+	x = DRAW_INDENT + DRAW_WIDTH - p.width / 2;
+	y = DRAW_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
 	emit_svg(p, x, y);
 }
 function
@@ -2723,8 +2723,8 @@ function
 draw_pass1(F, X)
 {
 	var i, x;
-	for (i = 0; i <= DRAW_SIZE + 1; i++) {
-		x = xmin + (xmax - xmin) * i / (DRAW_SIZE + 1);
+	for (i = 0; i <= DRAW_WIDTH + 1; i++) {
+		x = xmin + (xmax - xmin) * i / (DRAW_WIDTH + 1); // +1 eliminates aliasing
 		draw_point(F, X, x, 1);
 	}
 }
@@ -2759,9 +2759,9 @@ draw_point(F, X, x, save)
 {
 	var drawn, p, y, t;
 
-	t = DRAW_SIZE * (x - xmin) / (xmax - xmin);
+	t = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
 
-	if (t < 0 || t > DRAW_SIZE)
+	if (t < 0 || t > DRAW_WIDTH)
 		return;
 
 	draw_evalf(F, X, x);
@@ -2771,9 +2771,9 @@ draw_point(F, X, x, save)
 	if (!isdouble(p))
 		return;
 
-	y = DRAW_SIZE * (1 - (p.d - ymin) / (ymax - ymin));
+	y = DRAW_HEIGHT * (1 - (p.d - ymin) / (ymax - ymin));
 
-	if (y < 0 || y > DRAW_SIZE)
+	if (y < 0 || y > DRAW_HEIGHT)
 		drawn = 0;
 	else {
 		draw_line(t, y, t, y, 2);
@@ -2783,7 +2783,9 @@ draw_point(F, X, x, save)
 	if (save)
 		draw_array.push({x:x, y:y, drawn:drawn});
 }
-const DRAW_SIZE = 300;
+const DRAW_WIDTH = 300;
+const DRAW_HEIGHT = 300;
+
 const DRAW_INDENT = 100;
 const DRAW_PAD = 10;
 
@@ -2797,8 +2799,8 @@ var draw_array;
 function
 draw_xaxis()
 {
-	var y = DRAW_SIZE * (1 + ymin / (ymax - ymin));
-	draw_line(0, y, DRAW_SIZE, y, 0.5);
+	var y = DRAW_HEIGHT * (1 + ymin / (ymax - ymin));
+	draw_line(0, y, DRAW_WIDTH, y, 0.5);
 }
 function
 draw_xrange()
@@ -2832,8 +2834,8 @@ draw_xrange()
 function
 draw_yaxis()
 {
-	var x = DRAW_SIZE * xmin / (xmin - xmax);
-	draw_line(x, 0, x, DRAW_SIZE, 0.5);
+	var x = DRAW_WIDTH * xmin / (xmin - xmax);
+	draw_line(x, 0, x, DRAW_HEIGHT, 0.5);
 }
 function
 draw_yrange()
