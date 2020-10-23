@@ -1,4 +1,4 @@
-"Plot radial probability densities"
+"Draw radial probability densities"
 
 R(n,l) = 2 / n^2 *
          a0^(-3/2) *

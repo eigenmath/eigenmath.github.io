@@ -27,13 +27,13 @@ demos:
 	cat 1.txt compton-scattering-3.txt 2.txt > compton-scattering-3.html
 	cat 1.txt compton-scattering-4.txt 2.txt > compton-scattering-4.html
 	cat 1.txt compton-scattering-5.txt 2.txt > compton-scattering-5.html
+	cat 1.txt drawradialpdf.txt 2.txt > drawradialpdf.html
 	cat 1.txt energymatrix.txt 2.txt > energymatrix.html
 	cat 1.txt exchange-energy.txt 2.txt > exchange-energy.html
 	cat 1.txt hatom.txt 2.txt > hatom.html
 	cat 1.txt how-planck-calculated-h-and-k.txt 2.txt > how-planck-calculated-h-and-k.html
 	cat 1.txt legendre.txt 2.txt > legendre.html
 	cat 1.txt lincomb.txt 2.txt > lincomb.html
-	cat 1.txt plotradialpdf.txt 2.txt > plotradialpdf.html
 	cat 1.txt positionop1.txt 2.txt > positionop1.html
 	cat 1.txt positionop2.txt 2.txt > positionop2.html
 	cat 1.txt radialeigenfunc.txt 2.txt > radialeigenfunc.html
