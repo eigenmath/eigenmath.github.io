@@ -2723,8 +2723,8 @@ function
 draw_pass1(F, X)
 {
 	var i, x;
-	for (i = 0; i <= DRAW_COUNT; i++) {
-		x = xmin + (xmax - xmin) * i / DRAW_COUNT;
+	for (i = 0; i <= DRAW_SIZE + 1; i++) {
+		x = xmin + (xmax - xmin) * i / (DRAW_SIZE + 1);
 		draw_point(F, X, x, 1);
 	}
 }
@@ -2786,7 +2786,6 @@ draw_point(F, X, x, save)
 const DRAW_SIZE = 300;
 const DRAW_INDENT = 100;
 const DRAW_PAD = 10;
-const DRAW_COUNT = 201;
 
 var xmin;
 var xmax;
