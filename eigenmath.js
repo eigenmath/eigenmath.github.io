@@ -2616,8 +2616,8 @@ draw(F, X)
 
 	draw_array = [];
 
-	draw_data(F, X);
-	draw_fill(F, X);
+	draw_pass1(F, X);
+	draw_pass2(F, X);
 
 	outbuf += "</svg></p>\n";
 
@@ -2637,15 +2637,6 @@ draw_box()
 
 	draw_line(x1, y1, x1, y2, 2); // left line
 	draw_line(x2, y1, x2, y2, 2); // right line
-}
-function
-draw_data(F, X)
-{
-	var i, x;
-	for (i = 0; i <= DRAW_COUNT; i++) {
-		x = xmin + (xmax - xmin) * i / DRAW_COUNT;
-		draw_point(F, X, x, 1);
-	}
 }
 function
 draw_evalf(F, X, x)
@@ -2671,32 +2662,6 @@ draw_evalf(F, X, x)
 
 	finally {
 		//
-	}
-}
-function
-draw_fill(F, X)
-{
-	var i, j, m, n, p1, p2, x;
-
-	n = draw_array.length;
-
-	if (n < 2)
-		return;
-
-	for (i = 0; i < n - 1; i++) {
-
-		p1 = draw_array[i];
-		p2 = draw_array[i + 1];
-
-		if (p1.drawn == 0 && p2.drawn == 0)
-			continue;
-
-		m = Math.floor(Math.abs(p1.y - p2.y));
-
-		for (j = 1; j < m; j++) {
-			x = p1.x + (p2.x - p1.x) * j / m;
-			draw_point(F, X, x, 0);
-		}
 	}
 }
 function
@@ -2753,6 +2718,41 @@ draw_line(x1, y1, x2, y2, t)
 	y2 = "y2='" + y2 + "'";
 
 	outbuf += "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n";
+}
+function
+draw_pass1(F, X)
+{
+	var i, x;
+	for (i = 0; i <= DRAW_COUNT; i++) {
+		x = xmin + (xmax - xmin) * i / DRAW_COUNT;
+		draw_point(F, X, x, 1);
+	}
+}
+function
+draw_pass2(F, X)
+{
+	var i, j, m, n, p1, p2, x;
+
+	n = draw_array.length;
+
+	if (n < 2)
+		return;
+
+	for (i = 0; i < n - 1; i++) {
+
+		p1 = draw_array[i];
+		p2 = draw_array[i + 1];
+
+		if (p1.drawn == 0 && p2.drawn == 0)
+			continue;
+
+		m = Math.floor(Math.abs(p1.y - p2.y));
+
+		for (j = 1; j < m; j++) {
+			x = p1.x + (p2.x - p1.x) * j / m;
+			draw_point(F, X, x, 0);
+		}
+	}
 }
 function
 draw_point(F, X, x, save)
