@@ -1650,6 +1650,7 @@ const DERIVATIVE = "derivative";
 const DET = "det";
 const DO = "do";
 const DOT = "dot";
+const DRAW = "draw";
 const ERF = "erf";
 const EVAL = "eval";
 const EXP = "exp";
@@ -2595,6 +2596,277 @@ dproduct(p1, p2)
 	add_terms(n);
 }
 function
+draw(F, X)
+{
+	draw_xrange();
+	draw_yrange();
+
+	var h = DRAW_SIZE + 4 * DRAW_PAD;
+	var w = DRAW_INDENT + DRAW_SIZE + 2 * DRAW_PAD;
+
+	h = "height='" + h + "'";
+	w = "width='" + w + "'";
+
+	outbuf = "<p><svg " + h + w + ">\n"
+
+	draw_xaxis();
+	draw_yaxis();
+	draw_box();
+	draw_labels();
+
+	draw_array = [];
+
+	draw_data(F, X);
+	draw_fill(F, X);
+
+	outbuf += "</svg></p>\n";
+
+	stdout.innerHTML += outbuf;
+}
+function
+draw_box()
+{
+	var x1 = 0;
+	var x2 = DRAW_SIZE;
+
+	var y1 = 0;
+	var y2 = DRAW_SIZE;
+
+	draw_line(x1, y1, x2, y1, 2); // top line
+	draw_line(x1, y2, x2, y2, 2); // bottom line
+
+	draw_line(x1, y1, x1, y2, 2); // left line
+	draw_line(x2, y1, x2, y2, 2); // right line
+}
+function
+draw_data(F, X)
+{
+	var i, x;
+	for (i = 0; i < DRAW_COUNT; i++) {
+		x = xmin + (xmax - xmin) * i / DRAW_COUNT;
+		draw_point(F, X, x);
+	}
+}
+function
+draw_evalf(F, X, x)
+{
+	var tos = stack.length;
+	var tof = frame.length;
+
+	try {
+		push_double(x);
+		x = pop();
+		set_binding(X, x);
+		push(F);
+		evalf();
+		floatf();
+	}
+
+	catch(err) {
+		stack.splice(tos); // pop all
+		frame.splice(tof); // pop all
+		expanding = 1;
+		push_symbol(NIL);
+	}
+
+	finally {
+		//
+	}
+}
+function
+draw_fill(F, X)
+{
+	var i, j, m, n, x, min, max;
+
+	n = draw_array.length;
+
+	if (n == 0)
+		return;
+
+	m = Math.floor(400 / n); // fill count
+
+	min = draw_array[0];
+	max = draw_array[n - 1];
+
+	x = min - (xmax - xmin) / DRAW_COUNT;
+	draw_array.unshift(x);
+
+	x = max + (xmax - xmin) / DRAW_COUNT;
+	draw_array.push(x);
+
+	for (i = 0; i < n + 1; i++) {
+		min = draw_array[i];
+		max = draw_array[i + 1];
+		for (j = 1; j < m; j++) {
+			x = min + (max - min) * j / m;
+			draw_point(F, X, x);
+		}
+	}
+}
+function
+draw_labels()
+{
+	var p, x, y;
+
+	push_double(ymax);
+	p = pop();
+	p = emit_line(p, 1);
+	x = DRAW_INDENT - p.width - DRAW_PAD;
+	y = DRAW_PAD + p.height;
+	emit_svg(p, x, y);
+
+	push_double(ymin);
+	p = pop();
+	p = emit_line(p, 1);
+	x = DRAW_INDENT - p.width - DRAW_PAD;
+	y = DRAW_PAD + DRAW_SIZE;
+	emit_svg(p, x, y);
+
+	push_double(xmin);
+	p = pop();
+	p = emit_line(p, 1);
+	x = DRAW_INDENT - p.width / 2;
+	y = DRAW_PAD + DRAW_SIZE + 2 * SMALL_FONT_SIZE;
+	emit_svg(p, x, y);
+
+	push_double(xmax);
+	p = pop();
+	p = emit_line(p, 1);
+	x = DRAW_INDENT + DRAW_SIZE - p.width / 2;
+	y = DRAW_PAD + DRAW_SIZE + 2 * SMALL_FONT_SIZE;
+	emit_svg(p, x, y);
+}
+function
+draw_line(x1, y1, x2, y2, t)
+{
+	if (x1 == x2 && y1 == y2) {
+		x1 -= t / 2;
+		x2 += t / 2;
+	}
+
+	x1 += DRAW_INDENT;
+	x2 += DRAW_INDENT;
+
+	y1 += DRAW_PAD;
+	y2 += DRAW_PAD;
+
+	x1 = "x1='" + x1 + "'";
+	y1 = "y1='" + y1 + "'";
+
+	x2 = "x2='" + x2 + "'";
+	y2 = "y2='" + y2 + "'";
+
+	outbuf += "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n";
+}
+function
+draw_point(F, X, x)
+{
+	var p, y, t;
+
+	t = x;
+
+	x = DRAW_SIZE * (x - xmin) / (xmax - xmin);
+
+	if (x < 0 || x > DRAW_SIZE)
+		return;
+
+	draw_evalf(F, X, t);
+
+	p = pop();
+
+	if (!isdouble(p))
+		return;
+
+	y = DRAW_SIZE * (1 - (p.d - ymin) / (ymax - ymin));
+
+	if (y >= 0 && y <= DRAW_SIZE) {
+		draw_array.push(t);
+		draw_line(x, y, x, y, 2);
+	}
+}
+const DRAW_SIZE = 300;
+const DRAW_INDENT = 100;
+const DRAW_PAD = 10;
+const DRAW_COUNT = 101;
+
+var xmin;
+var xmax;
+
+var ymin;
+var ymax;
+
+var draw_array;
+function
+draw_xaxis()
+{
+	var y = DRAW_SIZE * (1 + ymin / (ymax - ymin));
+	draw_line(0, y, DRAW_SIZE, y, 0.5);
+}
+function
+draw_xrange()
+{
+	var p, p1, p2;
+
+	xmin = -10;
+	xmax = 10;
+
+	p = lookup("xrange");
+	push(p);
+	evalf();
+	floatf();
+	p = pop();
+
+	if (!istensor(p) || p.dim.length != 1 || p.dim[0] != 2)
+		return;
+
+	p1 = p.elem[0];
+	p2 = p.elem[1];
+
+	if (!isnum(p1) || !isnum(p2))
+		return;
+
+	push(p1);
+	xmin = pop_double();
+
+	push(p2);
+	xmax = pop_double();
+}
+function
+draw_yaxis()
+{
+	var x = DRAW_SIZE * xmin / (xmin - xmax);
+	draw_line(x, 0, x, DRAW_SIZE, 0.5);
+}
+function
+draw_yrange()
+{
+	var p, p1, p2;
+
+	ymin = -10;
+	ymax = 10;
+
+	p = lookup("yrange");
+	push(p);
+	evalf();
+	floatf();
+	p = pop();
+
+	if (!istensor(p) || p.dim.length != 1 || p.dim[0] != 2)
+		return;
+
+	p1 = p.elem[0];
+	p2 = p.elem[1];
+
+	if (!isnum(p1) || !isnum(p2))
+		return;
+
+	push(p1);
+	ymin = pop_double();
+
+	push(p2);
+	ymax = pop_double();
+}
+function
 dsin(F, X)
 {
 	push(cadr(F));
@@ -3362,7 +3634,7 @@ emit_math()
 {
 	var h, p, w;
 	p = pop();
-	p = emit_line(p);
+	p = emit_line(p, 0);
 	outbuf = "";
 	emit_svg(p, FONT_SIZE / 2, p.height);
 	h = p.height + p.depth;
@@ -3370,7 +3642,6 @@ emit_math()
 	h = "height='" + h + "'";
 	w = "width='" + w + "'";
 	outbuf = "<p><svg " + h + w + ">\n" + outbuf + "</svg></p>";
-	//print_buf(outbuf, RED);
 	stdout.innerHTML += outbuf;
 }
 function
@@ -4628,6 +4899,27 @@ function
 eval_dot(p1)
 {
 	eval_inner(p1);
+}
+function
+eval_draw(p)
+{
+	var F, X;
+	push_symbol(NIL); // return value
+	if (drawmode)
+		return;
+	F = cadr(p);
+	X = caddr(p);
+	if (!issymbol(X) || X == symbol(NIL)) {
+		push(F);
+		guess();
+		X = pop();
+		pop();
+	}
+	save_binding(X);
+	drawmode = 1;
+	draw(F, X);
+	drawmode = 0;
+	restore_binding(X);
 }
 function
 eval_erf(p1)
@@ -6139,6 +6431,7 @@ function
 init()
 {
 	expanding = 1;
+	drawmode = 0;
 	evaldepth = 0;
 
 	stack = [];
@@ -12446,6 +12739,9 @@ static_reciprocate()
 function
 stopf(s)
 {
+	if (drawmode)
+		throw s;
+
 	if (s.length > 0) {
 		if (trace1 < trace2 && inbuf[trace2 - 1] == '\n')
 			trace2--;
@@ -12795,6 +13091,7 @@ var one;
 var minusone;
 var imaginaryunit;
 var expanding;
+var drawmode;
 var evaldepth;
 var trace1;
 var trace2;
@@ -12825,6 +13122,7 @@ derivative:	{printname:DERIVATIVE,	func:eval_derivative},
 det:		{printname:DET,		func:eval_det},
 "do":		{printname:DO,		func:eval_do},
 dot:		{printname:DOT,		func:eval_dot},
+draw:		{printname:DRAW,	func:eval_draw},
 erf:		{printname:ERF,		func:eval_erf},
 "eval":		{printname:EVAL,	func:eval_eval},
 exp:		{printname:EXP,		func:eval_exp},
