@@ -1,6 +1,6 @@
 -- Draw angular distributions for Compton scattering
 
--- www.eigenmath.org/compton-scattering-4.txt
+-- eigenmath.org/compton-scattering-4.txt
 
 omegap = m omega / (m + omega (1 - cos(theta)))
 
