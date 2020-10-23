@@ -1,6 +1,4 @@
--- www.eigenmath.org/plancks-law.txt
-
--- draw a graph of black-body radiation
+-- Draw a graph of black-body radiation
 
 alpha = 1
 h = 1
