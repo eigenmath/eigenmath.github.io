@@ -2800,7 +2800,8 @@ function
 draw_xaxis()
 {
 	var y = DRAW_HEIGHT * (1 + ymin / (ymax - ymin));
-	draw_line(0, y, DRAW_WIDTH, y, 0.5);
+	if (y > 0 && y < DRAW_HEIGHT)
+		draw_line(0, y, DRAW_WIDTH, y, 0.5);
 }
 function
 draw_xrange()
@@ -2835,7 +2836,8 @@ function
 draw_yaxis()
 {
 	var x = DRAW_WIDTH * xmin / (xmin - xmax);
-	draw_line(x, 0, x, DRAW_HEIGHT, 0.5);
+	if (x > 0 && x < DRAW_WIDTH)
+		draw_line(x, 0, x, DRAW_HEIGHT, 0.5);
 }
 function
 draw_yrange()
