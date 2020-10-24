@@ -4810,7 +4810,7 @@ eval_derivative(p1)
 	p1 = cddr(p1);
 
 	if (!iscons(p1)) {
-		guess();
+		push_symbol(SYMBOL_X);
 		derivative();
 		return;
 	}
@@ -4832,7 +4832,7 @@ eval_derivative(p1)
 		if (isnum(X)) {
 			push(X);
 			n = pop_integer();
-			guess();
+			push_symbol(SYMBOL_X);
 			X = pop();
 			for (i = 0; i < n; i++) {
 				push(X);
@@ -5113,7 +5113,7 @@ eval_integral(p1)
 	p1 = cddr(p1);
 
 	if (!iscons(p1)) {
-		guess();
+		push_symbol(SYMBOL_X);
 		integral();
 		expanding--;
 		return;
@@ -5136,7 +5136,7 @@ eval_integral(p1)
 		if (isnum(X)) {
 			push(X);
 			n = pop_integer();
-			guess();
+			push_symbol(SYMBOL_X);
 			X = pop();
 			for (i = 0; i < n; i++) {
 				push(X);
@@ -6348,24 +6348,6 @@ get_binding(p)
 		return binding[p.printname];
 	else
 		return p;
-}
-function
-guess()
-{
-	var p = pop();
-	push(p);
-	if (findf(p, symbol(SYMBOL_X)))
-		push_symbol(SYMBOL_X);
-	else if (findf(p, symbol(SYMBOL_Y)))
-		push_symbol(SYMBOL_Y);
-	else if (findf(p, symbol(SYMBOL_Z)))
-		push_symbol(SYMBOL_Z);
-	else if (findf(p, symbol(SYMBOL_T)))
-		push_symbol(SYMBOL_T);
-	else if (findf(p, symbol(SYMBOL_S)))
-		push_symbol(SYMBOL_S);
-	else
-		push_symbol(SYMBOL_X);
 }
 function
 imag()
