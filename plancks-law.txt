@@ -1,16 +1,13 @@
 -- Draw a graph of black-body radiation for 3000 Kelvin
 
 -- x axis is frequency (hertz)
-
 -- y axis is joules per square meter (radiant exposure)
 
 T = 3000 kelvin
-
 c = 299792458 meter/second
-
 joule = kilogram meter^2 / second^2
 h = 6.62607004 10^(-34) joule second
-k = 1.38064852 10^(-23) joule / kelvin
+k = 1.38064852 10^(-23) joule/kelvin
 
 -- B(nu) is Planck's law
 
@@ -18,7 +15,7 @@ B(nu) = (2 h nu^3 / c^2) / (exp(h nu / (k T)) - 1)
 
 -- f cancels physical units so B(nu) can be graphed
 
-f = B(nu / second) meter^2 / joule
+f = B(nu/second) meter^2 / joule
 
 xrange = (0,10^15)
 yrange = (0,10^(-8))
