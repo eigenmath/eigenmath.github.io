@@ -2610,8 +2610,7 @@ draw(F, X)
 
 	draw_xrange();
 	draw_yrange();
-	draw_xaxis();
-	draw_yaxis();
+	draw_axes();
 	draw_box();
 	draw_labels();
 	draw_pass1(F, X);
@@ -2620,6 +2619,23 @@ draw(F, X)
 	outbuf += "</svg></p>\n";
 
 	stdout.innerHTML += outbuf;
+}
+function
+draw_axes()
+{
+	var dx, dy, x, y;
+
+	x = 0;
+	y = 0;
+
+	dx = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
+	dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
+
+	if (dx > 0 && dx < DRAW_WIDTH)
+		draw_line(dx, 0, dx, DRAW_HEIGHT, 0.5);
+
+	if (dy > 0 && dy < DRAW_HEIGHT)
+		draw_line(0, dy, DRAW_WIDTH, dy, 0.5);
 }
 function
 draw_box()
@@ -2782,13 +2798,6 @@ var ymax;
 
 var draw_array;
 function
-draw_xaxis()
-{
-	var y = DRAW_HEIGHT * (1 + ymin / (ymax - ymin));
-	if (y > 0 && y < DRAW_HEIGHT)
-		draw_line(0, y, DRAW_WIDTH, y, 0.5);
-}
-function
 draw_xrange()
 {
 	var p, p1, p2;
@@ -2816,13 +2825,6 @@ draw_xrange()
 
 	push(p2);
 	xmax = pop_double();
-}
-function
-draw_yaxis()
-{
-	var x = DRAW_WIDTH * xmin / (xmin - xmax);
-	if (x > 0 && x < DRAW_WIDTH)
-		draw_line(x, 0, x, DRAW_HEIGHT, 0.5);
 }
 function
 draw_yrange()
@@ -4896,12 +4898,8 @@ eval_draw(p)
 		return;
 	F = cadr(p);
 	X = caddr(p);
-	if (!issymbol(X) || X == symbol(NIL)) {
-		push(F);
-		guess();
-		X = pop();
-		pop();
-	}
+	if (!isusersymbol(X))
+		X = symbol(SYMBOL_X);
 	save_binding(X);
 	drawmode = 1;
 	draw(F, X);
