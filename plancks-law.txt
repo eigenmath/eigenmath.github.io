@@ -2,7 +2,7 @@
 
 -- x axis is frequency (hertz)
 
--- y axis is joules per meter square (radiant exposure)
+-- y axis is joules per square meter (radiant exposure)
 
 T = 3000 kelvin
 
