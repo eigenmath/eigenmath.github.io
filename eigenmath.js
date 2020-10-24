@@ -2598,24 +2598,22 @@ dproduct(p1, p2)
 function
 draw(F, X)
 {
-	draw_xrange();
-	draw_yrange();
+	var h, w;
 
-	var h = DRAW_HEIGHT + 4 * DRAW_PAD;
-	var w = DRAW_INDENT + DRAW_WIDTH + 4 * DRAW_PAD;
+	h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
+	w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
 
 	h = "height='" + h + "'";
 	w = "width='" + w + "'";
 
 	outbuf = "<p><svg " + h + w + ">\n"
 
+	draw_xrange();
+	draw_yrange();
 	draw_xaxis();
 	draw_yaxis();
 	draw_box();
 	draw_labels();
-
-	draw_array = [];
-
 	draw_pass1(F, X);
 	draw_pass2(F, X);
 
@@ -2672,49 +2670,44 @@ draw_labels()
 	push_double(ymax);
 	p = pop();
 	p = emit_line(p, 1);
-	x = DRAW_INDENT - p.width - DRAW_PAD;
-	y = DRAW_PAD + p.height;
+	x = DRAW_LEFT_PAD - p.width - SMALL_FONT_SIZE;
+	y = DRAW_TOP_PAD + p.height;
 	emit_svg(p, x, y);
 
 	push_double(ymin);
 	p = pop();
 	p = emit_line(p, 1);
-	x = DRAW_INDENT - p.width - DRAW_PAD;
-	y = DRAW_PAD + DRAW_HEIGHT;
+	x = DRAW_LEFT_PAD - p.width - SMALL_FONT_SIZE;
+	y = DRAW_TOP_PAD + DRAW_HEIGHT;
 	emit_svg(p, x, y);
 
 	push_double(xmin);
 	p = pop();
 	p = emit_line(p, 1);
-	x = DRAW_INDENT - p.width / 2;
-	y = DRAW_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
+	x = DRAW_LEFT_PAD - p.width / 2;
+	y = DRAW_TOP_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
 	emit_svg(p, x, y);
 
 	push_double(xmax);
 	p = pop();
 	p = emit_line(p, 1);
-	x = DRAW_INDENT + DRAW_WIDTH - p.width / 2;
-	y = DRAW_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
+	x = DRAW_LEFT_PAD + DRAW_WIDTH - p.width / 2;
+	y = DRAW_TOP_PAD + DRAW_HEIGHT + 2 * SMALL_FONT_SIZE;
 	emit_svg(p, x, y);
 }
 function
 draw_line(x1, y1, x2, y2, t)
 {
-	if (x1 == x2 && y1 == y2) {
-		x1 -= t / 2;
-		x2 += t / 2;
-	}
+	x1 += DRAW_LEFT_PAD;
+	x2 += DRAW_LEFT_PAD;
 
-	x1 += DRAW_INDENT;
-	x2 += DRAW_INDENT;
-
-	y1 += DRAW_PAD;
-	y2 += DRAW_PAD;
+	y1 += DRAW_TOP_PAD;
+	y2 += DRAW_TOP_PAD;
 
 	x1 = "x1='" + x1 + "'";
-	y1 = "y1='" + y1 + "'";
-
 	x2 = "x2='" + x2 + "'";
+
+	y1 = "y1='" + y1 + "'";
 	y2 = "y2='" + y2 + "'";
 
 	outbuf += "<line " + x1 + y1 + x2 + y2 + "style='stroke:black;stroke-width:" + t + "'/>\n";
@@ -2722,9 +2715,11 @@ draw_line(x1, y1, x2, y2, t)
 function
 draw_pass1(F, X)
 {
-	var i, x;
-	for (i = 0; i <= DRAW_WIDTH + 1; i++) {
-		x = xmin + (xmax - xmin) * i / (DRAW_WIDTH + 1); // +1 eliminates aliasing
+	var i, n, x;
+	draw_array = [];
+	n = DRAW_WIDTH + 1; // +1 eliminates aliasing
+	for (i = 1; i < n; i++) {
+		x = xmin + (xmax - xmin) * i / n;
 		draw_point(F, X, x, 1);
 	}
 }
@@ -2735,59 +2730,49 @@ draw_pass2(F, X)
 
 	n = draw_array.length;
 
-	if (n < 2)
-		return;
-
 	for (i = 0; i < n - 1; i++) {
 
 		p1 = draw_array[i];
 		p2 = draw_array[i + 1];
 
-		if (p1.drawn == 0 && p2.drawn == 0)
-			continue;
-
-		m = Math.floor(Math.abs(p1.y - p2.y));
-
-		for (j = 1; j < m; j++) {
-			x = p1.x + (p2.x - p1.x) * j / m;
-			draw_point(F, X, x, 0);
+		if ((p1.dy > 0 && p1.dy < DRAW_HEIGHT) || (p2.dy > 0 && p2.dy < DRAW_HEIGHT)) {
+			m = Math.floor(Math.abs(p1.dy - p2.dy));
+			for (j = 1; j < m; j++) {
+				x = p1.x + (p2.x - p1.x) * j / m;
+				draw_point(F, X, x, 0);
+			}
 		}
 	}
 }
 function
-draw_point(F, X, x, save)
+draw_point(F, X, x, pass1)
 {
-	var drawn, p, y, t;
-
-	t = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
-
-	if (t < 0 || t > DRAW_WIDTH)
-		return;
+	var dx, dy, p, y;
 
 	draw_evalf(F, X, x);
-
 	p = pop();
-
-	if (!isdouble(p))
+	if (!isnum(p))
 		return;
+	push(p);
+	y = pop_double();
 
-	y = DRAW_HEIGHT * (1 - (p.d - ymin) / (ymax - ymin));
+	dx = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
+	dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
 
-	if (y < 0 || y > DRAW_HEIGHT)
-		drawn = 0;
-	else {
-		draw_line(t, y, t, y, 2);
-		drawn = 1;
-	}
+	if (dy > 0 && dy < DRAW_HEIGHT)
+		draw_line(dx - 1, dy, dx + 1, dy, 2);
 
-	if (save)
-		draw_array.push({x:x, y:y, drawn:drawn});
+	if (pass1)
+		draw_array.push({x:x, y:y, dx:dx, dy:dy});
 }
 const DRAW_WIDTH = 300;
 const DRAW_HEIGHT = 300;
 
-const DRAW_INDENT = 100;
-const DRAW_PAD = 10;
+const DRAW_LEFT_PAD = 200;
+const DRAW_RIGHT_PAD = 100;
+
+const DRAW_TOP_PAD = 10;
+const DRAW_BOTTOM_PAD = 30;
 
 var xmin;
 var xmax;
