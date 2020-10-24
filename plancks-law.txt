@@ -13,7 +13,7 @@ k = 1.38064852 10^(-23) joule/kelvin
 
 B(nu) = (2 h nu^3 / c^2) / (exp(h nu / (k T)) - 1)
 
--- f cancels physical units so B(nu) can be graphed
+-- f cancels physical units so B(nu) can be drawn
 
 f = B(nu/second) meter^2 / joule
 
