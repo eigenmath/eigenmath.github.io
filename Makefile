@@ -28,6 +28,8 @@ demos:
 	cat 1.txt compton-scattering-4.txt 2.txt > compton-scattering-4.html
 	cat 1.txt compton-scattering-5.txt 2.txt > compton-scattering-5.html
 	cat 1.txt drawradialpdf.txt 2.txt > drawradialpdf.html
+	cat 1.txt electron-spin-1.txt 2.txt > electron-spin-1.html
+	cat 1.txt electron-spin-2.txt 2.txt > electron-spin-2.html
 	cat 1.txt energymatrix.txt 2.txt > energymatrix.html
 	cat 1.txt exchange-energy.txt 2.txt > exchange-energy.html
 	cat 1.txt hatom.txt 2.txt > hatom.html
